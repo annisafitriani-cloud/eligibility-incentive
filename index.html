@@ -822,6 +822,11 @@ tr:hover td {
   background: #fff;
 }
 
+.progress-stack {
+  display: grid;
+  gap: 6px;
+}
+
 .gap-grid.agent {
   grid-template-columns: repeat(4, minmax(86px, 1fr));
   min-width: 408px;
@@ -867,6 +872,15 @@ tr:hover td {
 .gap-cell.empty-gap {
   background: #f4f7fb;
   font-style: normal;
+}
+
+.mission-note {
+  display: block;
+  color: var(--navy-3);
+  font-size: 11px;
+  font-style: italic;
+  font-weight: 900;
+  text-align: right;
 }
 
 .status-badge {
@@ -1233,6 +1247,22 @@ function fillSelect(select, values, label) {
   select.value = values.includes(current) ? current : "";
 }
 
+function monthIndex(month) {
+  return monthOrder.indexOf(month);
+}
+
+function weekNumber(week) {
+  return Number(String(week || "").match(/\d+/)?.[0] || 0);
+}
+
+function compareLatestPeriod(a, b) {
+  const monthCompare = monthIndex(b.month) - monthIndex(a.month);
+  if (monthCompare !== 0) return monthCompare;
+  const weekCompare = weekNumber(b.week) - weekNumber(a.week);
+  if (weekCompare !== 0) return weekCompare;
+  return Number(b.isoweek || 0) - Number(a.isoweek || 0);
+}
+
 function isBmEligible(row) {
   return normalize(row.finalEligibility) === "eligible";
 }
@@ -1272,6 +1302,7 @@ function filteredRows() {
   const query = normalize(els.search.value);
 
   return rows
+    .filter((row) => (row.revenue || 0) > 0 || (row.ach || 0) > 0)
     .filter((row) => !els.branch.value || row.branch === els.branch.value)
     .filter((row) => !els.month.value || row.month === els.month.value)
     .filter((row) => activeView !== "bm" || !els.region.value || row.region === els.region.value)
@@ -1290,10 +1321,8 @@ function filteredRows() {
       return haystack.some((item) => normalize(item).includes(query));
     })
     .sort((a, b) => {
-      if (activeView === "agent" && !els.week.value) {
-        const weekCompare = String(a.week || "").localeCompare(String(b.week || ""), "id", { numeric: true });
-        if (weekCompare !== 0) return weekCompare;
-      }
+      const periodCompare = compareLatestPeriod(a, b);
+      if (periodCompare !== 0) return periodCompare;
       return (b.ach || 0) - (a.ach || 0);
     });
 }
@@ -1368,17 +1397,20 @@ function isQuickWin(row) {
 
 function renderAgentAction(rows) {
   const selectedRows = getSelectedAgentRows(rows);
-  els.agentActionPanel.classList.toggle("is-hidden", activeView !== "agent" || selectedRows.length === 0);
-  if (activeView !== "agent" || selectedRows.length === 0) return;
+  els.agentActionPanel.classList.toggle("is-hidden", activeView !== "agent");
+  if (activeView !== "agent") return;
 
-  const target = selectedRows[0];
-  const gap = remainingGap(target);
   const progress = currentDayProgress();
-  const weekLabel = els.week.value || target.week || "week terpilih";
-  const monthLabel = els.month.value || target.month || "bulan terpilih";
+  const target = selectedRows[0];
+  const weekLabel = els.week.value || target?.week || "week berjalan";
+  const monthLabel = els.month.value || target?.month || currentMonthWeek().month;
 
-  els.agentFocusTitle.textContent = `${target.agent} - ${weekLabel} ${monthLabel}`;
-  els.agentFocusSubtitle.textContent = `Hari ini ${progress.dayName}. Pantau sisa target dan aktivitas closing minggu ini.`;
+  els.agentFocusTitle.textContent = target
+    ? `${target.agent} - ${weekLabel} ${monthLabel}`
+    : `Progress Hari - ${weekLabel} ${monthLabel}`;
+  els.agentFocusSubtitle.textContent = target
+    ? `Hari ini ${progress.dayName}. Pantau sisa target dan aktivitas closing minggu ini.`
+    : `Hari ini ${progress.dayName}. Gunakan filter nama agent untuk melihat fokus personal.`;
   els.dayProgressText.textContent = `${progress.passed} hari sudah terlewati`;
   els.dayRemainingText.textContent = `${progress.remaining} hari berikutnya tersisa`;
   els.dayProgressFill.style.width = `${progress.percent}%`;
@@ -1445,19 +1477,22 @@ function renderNextLevel(rows) {
     : `<p class="empty">Tidak ada agent dengan gap menuju level berikutnya pada week berjalan.</p>`;
 }
 
-function progressCell(items, type) {
+function progressCell(items, type, missionComplete = false) {
   return `
-    <div class="gap-grid ${type}">
-      ${items.map(([label, value]) => {
-        const unlocked = normalize(value) === "unlocked" || (typeof value === "number" && value <= 0);
-        const empty = normalize(value) === "empty";
-        return `
-          <span class="gap-cell ${unlocked ? "unlocked" : ""} ${empty ? "empty-gap" : ""}">
-            <small>${label}</small>
-            <strong>${empty ? "0" : unlocked ? "Unlocked" : numberOnly(value)}</strong>
-          </span>
-        `;
-      }).join("")}
+    <div class="progress-stack">
+      <div class="gap-grid ${type}">
+        ${items.map(([label, value]) => {
+          const unlocked = normalize(value) === "unlocked" || (typeof value === "number" && value <= 0);
+          const empty = normalize(value) === "empty";
+          return `
+            <span class="gap-cell ${unlocked ? "unlocked" : ""} ${empty ? "empty-gap" : ""}">
+              <small>${label}</small>
+              <strong>${empty ? "0" : unlocked ? "Unlocked" : numberOnly(value)}</strong>
+            </span>
+          `;
+        }).join("")}
+      </div>
+      ${missionComplete ? `<em class="mission-note">Mission Complete! Tambah revenue untuk menambah nominal incentive</em>` : ""}
     </div>
   `;
 }
@@ -1490,7 +1525,7 @@ function agentProgress(row) {
     ["TH 1", th1Unlocked ? "Unlocked" : row.gapTH1],
     ["TH 2", th2Unlocked ? "Unlocked" : row.gapTH2],
     ["TH 3", th3Unlocked ? "Unlocked" : row.gapTH3],
-  ], "agent");
+  ], "agent", th3Unlocked);
 }
 
 function finalTh(row) {

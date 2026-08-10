@@ -561,6 +561,138 @@ input:focus {
   background: var(--yellow-soft);
 }
 
+.next-level-panel {
+  margin-bottom: 18px;
+  padding: 18px;
+  border: 1px solid #dfd6c5;
+  border-radius: 20px;
+  background: #fffdf8;
+  box-shadow: var(--shadow);
+}
+
+.next-level-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.next-level-head h2 {
+  color: #22303a;
+  font-size: 22px;
+}
+
+.next-level-head p {
+  margin-top: 5px;
+  color: #5a6971;
+  font-size: 15px;
+  font-weight: 750;
+}
+
+.next-level-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.next-level-controls button {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid #dbc99c;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--navy);
+  cursor: pointer;
+  font-size: 24px;
+  font-weight: 950;
+}
+
+.next-level-track {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(280px, 1fr);
+  gap: 16px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  padding-bottom: 4px;
+}
+
+.next-level-card {
+  scroll-snap-align: start;
+  min-height: 174px;
+  padding: 18px;
+  border: 1px solid #dfd6c5;
+  border-radius: 14px;
+  background: #fffbf3;
+}
+
+.next-level-card-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.next-level-card h3 {
+  color: #22303a;
+  font-size: 20px;
+  line-height: 1.08;
+}
+
+.next-level-card p {
+  margin-top: 4px;
+  color: #5a6971;
+  font-size: 15px;
+  font-weight: 750;
+}
+
+.next-level-card-head span {
+  flex: 0 0 auto;
+  height: fit-content;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: #d5a234;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 950;
+}
+
+.next-level-bar {
+  overflow: hidden;
+  height: 12px;
+  border-radius: 999px;
+  background: #eadfc8;
+}
+
+.next-level-bar i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #c89426, #e8bd52);
+}
+
+.next-level-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.next-level-meta strong {
+  color: #22303a;
+  font-size: 18px;
+  line-height: 1.1;
+}
+
+.next-level-meta small {
+  display: block;
+  color: #5a6971;
+  font-size: 13px;
+  font-weight: 800;
+}
+
 .quick-win-row td {
   background: #fff9d8;
 }
@@ -899,7 +1031,20 @@ tr:hover td {
             </div>
             <div class="day-progress-track"><i id="day-progress-fill"></i></div>
           </div>
-          <div class="activity-notes" id="activity-notes"></div>
+        </section>
+
+        <section class="next-level-panel is-hidden" id="next-level-panel" aria-label="Paling dekat ke level berikutnya">
+          <div class="next-level-head">
+            <div>
+              <h2>🎯 Paling Dekat ke Level Berikutnya</h2>
+              <p>Agent dengan progres tertinggi menuju threshold berikutnya — target paling realistis dikejar minggu ini.</p>
+            </div>
+            <div class="next-level-controls">
+              <button id="next-level-left" type="button" aria-label="Geser kiri">‹</button>
+              <button id="next-level-right" type="button" aria-label="Geser kanan">›</button>
+            </div>
+          </div>
+          <div class="next-level-track" id="next-level-track"></div>
         </section>
 
         <section class="toggle-row" id="quick-toggle-row" aria-label="Filter status cepat"></section>
@@ -1023,7 +1168,10 @@ const els = {
   dayProgressText: document.querySelector("#day-progress-text"),
   dayRemainingText: document.querySelector("#day-remaining-text"),
   dayProgressFill: document.querySelector("#day-progress-fill"),
-  activityNotes: document.querySelector("#activity-notes"),
+  nextLevelPanel: document.querySelector("#next-level-panel"),
+  nextLevelTrack: document.querySelector("#next-level-track"),
+  nextLevelLeft: document.querySelector("#next-level-left"),
+  nextLevelRight: document.querySelector("#next-level-right"),
   quickToggleRow: document.querySelector("#quick-toggle-row"),
   schemeTitle: document.querySelector("#scheme-title"),
   schemeSubtitle: document.querySelector("#scheme-subtitle"),
@@ -1213,7 +1361,6 @@ function renderAgentAction(rows) {
   const target = selectedRows[0];
   const gap = remainingGap(target);
   const callCount = gap > 5000000 ? 10 : 5;
-  const paidEstimate = Math.max(1, Math.ceil(gap / 6000000));
   const progress = currentDayProgress();
   const weekLabel = els.week.value || target.week || "week terpilih";
   const monthLabel = els.month.value || target.month || "bulan terpilih";
@@ -1224,15 +1371,52 @@ function renderAgentAction(rows) {
   els.dayProgressText.textContent = `${progress.passed} hari sudah terlewati`;
   els.dayRemainingText.textContent = `${progress.remaining} hari berikutnya tersisa`;
   els.dayProgressFill.style.width = `${progress.percent}%`;
-  els.activityNotes.innerHTML = [
-    "Check siswa yang ada cicilan week ini.",
-    "Check data connected dan hold/minat FU, lalu telepon segera untuk closing week ini.",
-    "Check kembali data fresh leads dan follow up kembali.",
-    "Check data expired cicilan yang masih bisa dihubungi.",
-    `Sisa target minggu ini ${gap ? numberOnly(gap) : "sudah aman"}. Minimal capai target sekitar ${numberOnly(gap || 0)} dengan estimasi ${paidEstimate} paid jika ARPU 6 juta.`,
-    `Rekomendasi hari ini: telepon minimal ${callCount} user.`,
-    isQuickWin(target) ? "Quick win: gap < 10%, paling realistis dikejar minggu ini." : "",
-  ].filter(Boolean).map((item) => `<article class="${item.startsWith("Quick win") ? "quick-win-note" : ""}"><span>✓</span><p>${item}</p></article>`).join("");
+}
+
+function nextLevelInfo(row) {
+  const levels = [
+    { label: "TH 0", target: row.tierRevenueTH0, gap: row.gapTH0 },
+    { label: "TH 1", target: row.tierRevenueTH1, gap: row.gapTH1 },
+    { label: "TH 2", target: row.tierRevenueTH2, gap: row.gapTH2 },
+    { label: "TH 3", target: row.tierRevenueTH3, gap: row.gapTH3 },
+  ].filter((level) => level.target > 0);
+  const next = levels.find((level) => level.gap > 0) || levels[levels.length - 1];
+  if (!next) return null;
+  const achieved = Math.max(0, Math.min(1, 1 - (next.gap || 0) / next.target));
+  return {
+    label: next.gap > 0 ? `Buka ${next.label}` : "Unlocked",
+    gap: Math.max(next.gap || 0, 0),
+    progress: achieved,
+  };
+}
+
+function renderNextLevel(rows) {
+  els.nextLevelPanel.classList.toggle("is-hidden", activeView !== "agent");
+  if (activeView !== "agent") return;
+  const cards = rows
+    .map((row) => ({ row, info: nextLevelInfo(row) }))
+    .filter((item) => item.info && item.info.gap > 0)
+    .sort((a, b) => b.info.progress - a.info.progress)
+    .slice(0, 12);
+
+  els.nextLevelTrack.innerHTML = cards.length
+    ? cards.map(({ row, info }) => `
+      <article class="next-level-card">
+        <div class="next-level-card-head">
+          <div>
+            <h3>${row.agent}</h3>
+            <p>${row.branch}</p>
+          </div>
+          <span>${info.label}</span>
+        </div>
+        <div class="next-level-bar"><i style="width:${info.progress * 100}%"></i></div>
+        <div class="next-level-meta">
+          <strong>${Math.round(info.progress * 100)}%<small>tercapai</small></strong>
+          <strong><small>sisa Rp</small>${numberOnly(info.gap)}</strong>
+        </div>
+      </article>
+    `).join("")
+    : `<p class="empty">Tidak ada agent dengan gap menuju level berikutnya pada filter ini.</p>`;
 }
 
 function progressCell(items, type) {
@@ -1362,6 +1546,7 @@ function renderDashboard() {
   renderQuickToggles();
   renderSummary(rows);
   renderAgentAction(rows);
+  renderNextLevel(rows);
   renderTable(rows);
 }
 
@@ -1411,6 +1596,12 @@ els.schemeDetailButton.addEventListener("click", () => els.schemeModal.showModal
 els.schemeModalClose.addEventListener("click", () => els.schemeModal.close());
 els.schemeModal.addEventListener("click", (event) => {
   if (event.target === els.schemeModal) els.schemeModal.close();
+});
+els.nextLevelLeft.addEventListener("click", () => {
+  els.nextLevelTrack.scrollBy({ left: -420, behavior: "smooth" });
+});
+els.nextLevelRight.addEventListener("click", () => {
+  els.nextLevelTrack.scrollBy({ left: 420, behavior: "smooth" });
 });
 
 setupFilters();

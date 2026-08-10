@@ -381,6 +381,120 @@ input:focus {
   margin: 4px 0 18px;
 }
 
+.agent-action-panel {
+  margin-bottom: 18px;
+  padding: 18px;
+  border: 1px solid rgba(91, 185, 222, 0.45);
+  border-radius: 20px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(233, 249, 255, 0.96)),
+    #fff;
+  box-shadow: var(--shadow);
+}
+
+.agent-action-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 16px;
+}
+
+.mini-eyebrow {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--navy-3);
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.agent-action-head h2 {
+  color: var(--navy);
+  font-size: 20px;
+}
+
+.agent-action-head p {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 750;
+}
+
+#call-target {
+  flex: 0 0 auto;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--yellow), #ffec8b);
+  color: var(--navy);
+  font-size: 15px;
+}
+
+.day-progress {
+  margin-bottom: 14px;
+}
+
+.day-progress-label {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+  color: var(--navy);
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.day-progress-track {
+  overflow: hidden;
+  height: 14px;
+  border-radius: 999px;
+  background: #dfeaf4;
+}
+
+.day-progress-track i {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--navy-3), var(--sky), var(--yellow));
+}
+
+.activity-notes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.activity-notes article {
+  display: flex;
+  gap: 10px;
+  min-height: 58px;
+  padding: 12px;
+  border-radius: 14px;
+  background: #fff;
+  border: 1px solid var(--line);
+}
+
+.activity-notes span {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--sky-soft);
+  color: var(--navy-3);
+  font-weight: 950;
+}
+
+.activity-notes p {
+  color: #34445a;
+  font-size: 13px;
+  line-height: 1.45;
+  font-weight: 750;
+}
+
 .status-toggle {
   min-height: 42px;
   min-width: 116px;
@@ -584,6 +698,10 @@ tr:hover td {
   .scheme-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .activity-notes {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 700px) {
@@ -690,6 +808,25 @@ tr:hover td {
           </article>
         </section>
 
+        <section class="agent-action-panel is-hidden" id="agent-action-panel" aria-label="Rekomendasi aktivitas agent">
+          <div class="agent-action-head">
+            <div>
+              <span class="mini-eyebrow">Agent Weekly Focus</span>
+              <h2 id="agent-focus-title">Progress Hari & Rekomendasi Activity</h2>
+              <p id="agent-focus-subtitle">Filter nama agent untuk melihat rekomendasi personal.</p>
+            </div>
+            <strong id="call-target">-</strong>
+          </div>
+          <div class="day-progress">
+            <div class="day-progress-label">
+              <span id="day-progress-text">0 hari terlewati</span>
+              <strong id="day-remaining-text">0 hari tersisa</strong>
+            </div>
+            <div class="day-progress-track"><i id="day-progress-fill"></i></div>
+          </div>
+          <div class="activity-notes" id="activity-notes"></div>
+        </section>
+
         <section class="toggle-row" id="quick-toggle-row" aria-label="Filter status cepat"></section>
 
         <section class="table-panel">
@@ -793,6 +930,14 @@ const els = {
   statusSummary: document.querySelector("#status-summary"),
   top: document.querySelector("#metric-top"),
   topDetail: document.querySelector("#metric-top-detail"),
+  agentActionPanel: document.querySelector("#agent-action-panel"),
+  agentFocusTitle: document.querySelector("#agent-focus-title"),
+  agentFocusSubtitle: document.querySelector("#agent-focus-subtitle"),
+  callTarget: document.querySelector("#call-target"),
+  dayProgressText: document.querySelector("#day-progress-text"),
+  dayRemainingText: document.querySelector("#day-remaining-text"),
+  dayProgressFill: document.querySelector("#day-progress-fill"),
+  activityNotes: document.querySelector("#activity-notes"),
   quickToggleRow: document.querySelector("#quick-toggle-row"),
   schemeTitle: document.querySelector("#scheme-title"),
   schemeSubtitle: document.querySelector("#scheme-subtitle"),
@@ -941,6 +1086,58 @@ function renderSummary(rows) {
     : "Belum ada data";
 }
 
+function getSelectedAgentRows(rows) {
+  if (activeView !== "agent") return [];
+  const query = normalize(els.search.value);
+  if (!query) return [];
+  return rows.filter((row) => normalize(row.agent).includes(query) || normalize(row.email).includes(query));
+}
+
+function currentDayProgress() {
+  const now = new Date();
+  const day = now.getDay();
+  const passed = Math.min(Math.max(day, 1), 6);
+  const remaining = Math.max(6 - passed, 0);
+  return {
+    passed,
+    remaining,
+    percent: (passed / 6) * 100,
+    dayName: new Intl.DateTimeFormat("id-ID", { weekday: "long" }).format(now),
+  };
+}
+
+function remainingGap(row) {
+  const gaps = [row.gapTH0, row.gapTH1, row.gapTH2, row.gapTH3].filter((value) => typeof value === "number" && value > 0);
+  return gaps.length ? Math.min(...gaps) : 0;
+}
+
+function renderAgentAction(rows) {
+  const selectedRows = getSelectedAgentRows(rows);
+  els.agentActionPanel.classList.toggle("is-hidden", activeView !== "agent" || selectedRows.length === 0);
+  if (activeView !== "agent" || selectedRows.length === 0) return;
+
+  const target = selectedRows[0];
+  const gap = remainingGap(target);
+  const callCount = gap > 5000000 ? 10 : 5;
+  const progress = currentDayProgress();
+  const weekLabel = els.week.value || target.week || "week terpilih";
+  const monthLabel = els.month.value || target.month || "bulan terpilih";
+
+  els.agentFocusTitle.textContent = `${target.agent} - ${weekLabel} ${monthLabel}`;
+  els.agentFocusSubtitle.textContent = `Hari ini ${progress.dayName}. Pantau sisa target dan aktivitas closing minggu ini.`;
+  els.callTarget.textContent = `Telepon ${callCount} user`;
+  els.dayProgressText.textContent = `${progress.passed} hari sudah terlewati`;
+  els.dayRemainingText.textContent = `${progress.remaining} hari berikutnya tersisa`;
+  els.dayProgressFill.style.width = `${progress.percent}%`;
+  els.activityNotes.innerHTML = [
+    "Check siswa yang ada cicilan week ini.",
+    "Check data connected dan hold/minat FU, lalu telepon segera untuk closing week ini.",
+    "Check kembali data fresh leads dan follow up kembali.",
+    "Check data expired cicilan yang masih bisa dihubungi.",
+    `Karena sisa target ${gap ? numberOnly(gap) : "sudah aman"}, rekomendasi hari ini: telepon minimal ${callCount} user.`,
+  ].map((item) => `<article><span>✓</span><p>${item}</p></article>`).join("");
+}
+
 function progressCell(items, type) {
   return `
     <div class="gap-grid ${type}">
@@ -1064,6 +1261,7 @@ function renderDashboard() {
   renderScheme();
   renderQuickToggles();
   renderSummary(rows);
+  renderAgentAction(rows);
   renderTable(rows);
 }
 

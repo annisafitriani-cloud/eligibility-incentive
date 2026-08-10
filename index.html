@@ -152,6 +152,20 @@ p {
   line-height: 1.55;
 }
 
+.notes em {
+  color: var(--navy);
+  font-style: italic;
+  font-weight: 850;
+}
+
+.notes mark {
+  padding: 2px 6px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--yellow), #ffe984);
+  color: var(--navy);
+  font-weight: 950;
+}
+
 .dashboard {
   padding-top: 6px;
 }
@@ -859,6 +873,11 @@ tr:hover td {
   font-style: italic;
 }
 
+.gap-cell.empty-gap {
+  background: #f4f7fb;
+  font-style: normal;
+}
+
 .status-badge {
   display: inline-flex;
   align-items: center;
@@ -948,7 +967,7 @@ tr:hover td {
 
       <section class="notes">
         <strong><span class="note-icon">!</span> Notes</strong>
-        <p>Dashboard ini bukan perhitungan kalkulasi incentive. Ini sebagai panduan sisa target yang harus dikejar untuk mendapatkan atau membuka TH incentive. Kalibrasi dilakukan di file terpisah.</p>
+        <p><em>Dashboard ini bukan perhitungan kalibrasi incentive. Ini sebagai panduan sisa target yang harus dikejar untuk membuka TH incentive.</em> <mark>Kalibrasi dilakukan di file terpisah di setiap tanggal 12-15 setiap bulan. Silahkan tanyakan ke BM masing-masing.</mark></p>
       </section>
 
       <section class="dashboard" id="dashboard-view">
@@ -1234,13 +1253,17 @@ function optionRows() {
   return rows.filter((row) => row.month === els.month.value);
 }
 
+function rowsWithActualData(rows) {
+  return rows.filter((row) => (row.revenue || 0) > 0 || (row.ach || 0) > 0);
+}
+
 function setupFilters() {
   const rows = dashboardData[activeView] ?? [];
   const scopedRows = optionRows();
   const config = viewConfigs[activeView];
 
   fillSelect(els.branch, uniqueSorted(scopedRows, "branch"), "Semua cabang");
-  fillSelect(els.month, uniqueSorted(rows, "month"), "Semua bulan");
+  fillSelect(els.month, uniqueSorted(rowsWithActualData(rows), "month"), "Semua bulan");
   fillSelect(els.region, uniqueSorted(scopedRows, "region"), "Semua region");
   fillSelect(els.week, uniqueSorted(scopedRows, "week"), "Semua week");
   fillSelect(els.type, uniqueSorted(scopedRows, config.typeKey), activeView === "bm" ? "Semua type" : "Semua posisi");
@@ -1424,10 +1447,11 @@ function progressCell(items, type) {
     <div class="gap-grid ${type}">
       ${items.map(([label, value]) => {
         const unlocked = normalize(value) === "unlocked" || (typeof value === "number" && value <= 0);
+        const empty = normalize(value) === "empty";
         return `
-          <span class="gap-cell ${unlocked ? "unlocked" : ""}">
+          <span class="gap-cell ${unlocked ? "unlocked" : ""} ${empty ? "empty-gap" : ""}">
             <small>${label}</small>
-            <strong>${unlocked ? "Unlocked" : numberOnly(value)}</strong>
+            <strong>${empty ? "0" : unlocked ? "Unlocked" : numberOnly(value)}</strong>
           </span>
         `;
       }).join("")}
@@ -1436,6 +1460,13 @@ function progressCell(items, type) {
 }
 
 function bmProgress(row) {
+  if (!row.revenue || row.revenue <= 0 || !row.ach || row.ach <= 0) {
+    return progressCell([
+      ["TH 0", "empty"],
+      ["TH 1", "empty"],
+      ["TH 2", "empty"],
+    ], "bm");
+  }
   const th0Unlocked = normalize(row.revenueProgress) === "unlocked";
   const th1Unlocked = th0Unlocked && row.gapTH0 <= 0;
   const th2Unlocked = th1Unlocked && row.gapTH1 <= 0;
@@ -1461,6 +1492,7 @@ function agentProgress(row) {
 
 function finalTh(row) {
   if (activeView === "agent") return row.finalEligibility || "Not Eligible";
+  if (!row.revenue || row.revenue <= 0 || !row.ach || row.ach <= 0) return "Not Eligible";
   const th0Unlocked = normalize(row.revenueProgress) === "unlocked";
   const th1Unlocked = th0Unlocked && row.gapTH0 <= 0;
   const th2Unlocked = th1Unlocked && row.gapTH1 <= 0;

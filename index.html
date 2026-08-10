@@ -1159,7 +1159,7 @@ function bmProgress(row) {
   const th1Unlocked = th0Unlocked && row.gapTH0 <= 0;
   const th2Unlocked = th1Unlocked && row.gapTH1 <= 0;
   return progressCell([
-    ["TH 0", th0Unlocked ? "Unlocked" : row.tierRevenueTH0 - row.revenue],
+    ["TH 0", th0Unlocked ? "Unlocked" : row.revenueProgress],
     ["TH 1", th1Unlocked ? "Unlocked" : row.gapTH0],
     ["TH 2", th2Unlocked ? "Unlocked" : row.gapTH1],
   ], "bm");
@@ -1180,10 +1180,12 @@ function agentProgress(row) {
 
 function finalTh(row) {
   if (activeView === "agent") return row.finalEligibility || "Not Eligible";
-  if (!isBmEligible(row)) return "Not Eligible";
-  if (normalize(row.revenueProgress) === "unlocked" && row.gapTH0 <= 0 && row.gapTH1 <= 0) return "TH 2";
-  if (normalize(row.revenueProgress) === "unlocked" && row.gapTH0 <= 0) return "TH 1";
-  if (normalize(row.revenueProgress) === "unlocked") return "TH 0";
+  const th0Unlocked = normalize(row.revenueProgress) === "unlocked";
+  const th1Unlocked = th0Unlocked && row.gapTH0 <= 0;
+  const th2Unlocked = th1Unlocked && row.gapTH1 <= 0;
+  if (th2Unlocked) return "TH 2";
+  if (th1Unlocked) return "TH 1";
+  if (th0Unlocked) return "TH 0";
   return "Not Eligible";
 }
 

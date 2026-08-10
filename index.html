@@ -7,16 +7,19 @@
     <style>
 :root {
   color-scheme: light;
-  --ink: #101827;
-  --muted: #5f6b7c;
-  --line: #171717;
-  --paper: #ffffff;
-  --soft: #f7f9fc;
-  --navy: #111b35;
-  --sky: #91dff5;
-  --yellow: #f4ce3d;
+  --navy: #0c1834;
+  --navy-2: #173a72;
+  --navy-3: #245b9e;
+  --sky: #87dff3;
+  --sky-soft: #e9f9ff;
+  --yellow: #f5cc38;
+  --yellow-soft: #fff7d0;
   --unlock: #fbff00;
-  --shadow: 0 16px 36px rgba(17, 27, 53, 0.1);
+  --paper: #ffffff;
+  --ink: #111827;
+  --muted: #637083;
+  --line: #d7e1ec;
+  --shadow: 0 22px 54px rgba(12, 24, 52, 0.13);
 }
 
 * {
@@ -26,11 +29,11 @@
 body {
   margin: 0;
   min-height: 100vh;
-  background: #f2f5f9;
+  background:
+    radial-gradient(circle at top left, rgba(135, 223, 243, 0.34), transparent 34%),
+    linear-gradient(135deg, #f7fbff 0%, #fffaf0 46%, #eef8ff 100%);
   color: var(--ink);
-  font-family:
-    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    sans-serif;
+  font-family: "Plus Jakarta Sans", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 button,
@@ -45,29 +48,28 @@ input {
 
 .app {
   min-height: 100vh;
+  padding: 26px;
 }
 
-.landing {
-  display: grid;
-  place-items: center;
-  min-height: 100vh;
-  padding: 38px;
-  background:
-    linear-gradient(135deg, rgba(145, 223, 245, 0.2), rgba(244, 206, 61, 0.16)),
-    var(--paper);
+.app-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 22px;
+  padding: 26px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, var(--navy), var(--navy-2) 58%, #49c3df);
+  color: #fff;
+  box-shadow: var(--shadow);
 }
 
-.landing-shell {
-  width: min(1040px, 100%);
-  text-align: center;
-}
-
-.eyebrow {
-  margin: 0 0 10px;
-  color: #315f77;
+.eyebrow,
+.sheet-label {
+  margin: 0 0 8px;
+  color: var(--yellow);
   font-size: 12px;
   font-weight: 900;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.11em;
   text-transform: uppercase;
 }
 
@@ -77,170 +79,142 @@ p {
   margin: 0;
 }
 
-.landing h1 {
-  font-size: clamp(38px, 6vw, 72px);
+.app-header h1 {
+  font-size: clamp(30px, 4vw, 56px);
   line-height: 1;
   letter-spacing: 0;
 }
 
-.landing-actions {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(240px, 1fr));
-  gap: 44px;
-  margin: 76px auto 88px;
-  max-width: 860px;
+.view-tabs {
+  display: flex;
+  gap: 10px;
+  padding: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
 }
 
-.landing-card {
-  min-height: 132px;
-  padding: 24px;
-  border: 3px solid var(--line);
-  border-radius: 8px;
-  background: linear-gradient(135deg, #fff, #eefaff);
-  color: var(--ink);
+.view-tab {
+  min-height: 44px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #eaf7ff;
   cursor: pointer;
-  text-align: left;
-  box-shadow: 9px 9px 0 var(--navy);
+  font-weight: 900;
 }
 
-.landing-card:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 12px 12px 0 var(--yellow);
-}
-
-.landing-card span {
-  display: block;
-  margin-bottom: 10px;
-  font-size: clamp(30px, 4vw, 44px);
-  font-weight: 950;
-  text-transform: uppercase;
-}
-
-.landing-card small {
-  color: var(--muted);
-  font-size: 15px;
-  font-weight: 800;
+.view-tab.active,
+.view-tab:hover {
+  background: linear-gradient(135deg, var(--yellow), #ffe987);
+  color: var(--navy);
 }
 
 .notes {
-  width: min(660px, 100%);
-  margin: 0 auto;
-  padding: 24px 28px;
-  border: 2px dashed var(--line);
-  border-radius: 8px;
-  background: #fffef3;
-  text-align: left;
+  margin: 18px 0;
+  padding: 16px 18px;
+  border: 1px solid #f0df83;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #fffdf2, #f0fbff);
+  box-shadow: 0 12px 28px rgba(12, 24, 52, 0.08);
 }
 
 .notes strong {
   display: block;
-  margin-bottom: 8px;
-  font-size: 24px;
+  margin-bottom: 5px;
+  color: var(--navy);
+  font-size: 16px;
 }
 
 .notes p {
-  color: #242b35;
-  font-size: 18px;
+  color: #4d5c70;
+  font-size: 14px;
   line-height: 1.55;
 }
 
 .dashboard {
-  min-height: 100vh;
-  padding: 24px;
-  background: var(--paper);
+  padding-top: 6px;
 }
 
-.dashboard-header {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  align-items: start;
-  gap: 24px;
-  margin-bottom: 28px;
-}
-
-.dashboard-header h1 {
-  font-size: clamp(36px, 5vw, 68px);
-  line-height: 1;
-  text-transform: uppercase;
-}
-
-.back-button,
-.ghost-button,
-.status-toggle {
-  min-height: 44px;
-  border: 2px solid var(--line);
-  border-radius: 8px;
-  background: #fff;
-  color: var(--ink);
-  cursor: pointer;
-  font-weight: 900;
-}
-
-.back-button {
-  width: 78px;
-  background: var(--navy);
-  color: #fff;
+.sheet-label {
+  color: var(--navy-3);
 }
 
 .filters {
   display: grid;
-  grid-template-columns: repeat(6, minmax(130px, 1fr)) auto;
-  gap: 18px;
+  grid-template-columns: repeat(5, minmax(150px, 1fr)) auto;
+  gap: 14px;
   align-items: end;
-  margin-bottom: 26px;
+  margin-bottom: 18px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: var(--shadow);
 }
 
 label {
   display: grid;
-  gap: 8px;
-  font-size: 22px;
+  gap: 7px;
+  color: var(--navy);
+  font-size: 12px;
   font-weight: 900;
+  text-transform: uppercase;
 }
 
 select,
 input {
   width: 100%;
-  min-height: 54px;
-  padding: 0 14px;
-  border: 3px solid var(--line);
-  border-radius: 8px;
+  min-height: 46px;
+  padding: 0 13px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
   background: #fff;
   color: var(--ink);
   outline: none;
-  font-size: 16px;
-  font-weight: 800;
+  font-size: 14px;
+  font-weight: 750;
 }
 
 select:focus,
 input:focus {
-  box-shadow: 0 0 0 4px rgba(145, 223, 245, 0.45);
+  border-color: var(--sky);
+  box-shadow: 0 0 0 4px rgba(135, 223, 243, 0.27);
 }
 
 .ghost-button {
+  min-height: 46px;
   padding: 0 18px;
-  background: var(--yellow);
+  border: 0;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--yellow), #ffe985);
+  color: var(--navy);
+  cursor: pointer;
+  font-weight: 950;
 }
 
 .summary-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 22px;
-  margin-bottom: 24px;
+  grid-template-columns: 0.8fr 1.25fr 1fr;
+  gap: 16px;
+  margin-bottom: 18px;
 }
 
 .summary-card {
-  min-height: 154px;
-  padding: 22px;
-  border: 3px solid var(--line);
-  border-radius: 8px;
-  background: #fff;
+  min-height: 140px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.9);
   box-shadow: var(--shadow);
 }
 
 .summary-card span {
   display: block;
   margin-bottom: 10px;
-  font-size: 18px;
+  color: var(--muted);
+  font-size: 12px;
   font-weight: 950;
   text-transform: uppercase;
 }
@@ -248,41 +222,45 @@ input:focus {
 .summary-card strong {
   display: block;
   margin-bottom: 8px;
-  font-size: 42px;
-  line-height: 1;
+  color: var(--navy);
+  font-size: clamp(24px, 3vw, 38px);
+  line-height: 1.05;
 }
 
 .summary-card p {
   color: var(--muted);
-  font-size: 16px;
+  font-size: 13px;
   font-weight: 750;
 }
 
 .status-summary {
   display: grid;
-  gap: 10px;
+  gap: 9px;
 }
 
 .status-line {
   display: grid;
-  grid-template-columns: 96px minmax(80px, 1fr) 58px 44px;
+  grid-template-columns: 92px minmax(80px, 1fr) 58px 42px;
   align-items: center;
-  gap: 10px;
+  gap: 9px;
 }
 
 .status-line span,
 .status-line strong,
 .status-line em {
-  font-size: 14px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 850;
+}
+
+.status-line em {
+  color: var(--muted);
 }
 
 .status-bar {
   overflow: hidden;
   height: 10px;
-  background: #e6eaf0;
-  border: 1px solid var(--line);
+  background: #e8eef6;
   border-radius: 999px;
 }
 
@@ -290,30 +268,42 @@ input:focus {
   display: block;
   height: 100%;
   background: linear-gradient(90deg, var(--yellow), var(--sky));
+  border-radius: inherit;
 }
 
 .toggle-row {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
-  gap: 14px;
-  margin: 10px 0 24px;
+  gap: 10px;
+  margin: 4px 0 18px;
 }
 
 .status-toggle {
-  min-width: 126px;
-  padding: 0 18px;
+  min-height: 42px;
+  min-width: 116px;
+  padding: 0 16px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--navy);
+  cursor: pointer;
+  font-weight: 900;
+  box-shadow: 0 8px 18px rgba(12, 24, 52, 0.06);
 }
 
 .status-toggle.active,
 .status-toggle:hover {
-  background: var(--navy);
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--navy), var(--navy-3));
   color: #fff;
 }
 
 .table-panel {
-  border: 3px solid var(--line);
-  border-radius: 8px;
-  background: #fff;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.94);
   box-shadow: var(--shadow);
 }
 
@@ -323,67 +313,83 @@ input:focus {
   justify-content: space-between;
   gap: 18px;
   padding: 18px 20px;
-  background: linear-gradient(90deg, var(--sky), var(--yellow));
-  border-bottom: 3px solid var(--line);
+  background: linear-gradient(90deg, rgba(135, 223, 243, 0.86), rgba(245, 204, 56, 0.78));
 }
 
 .panel-head h2 {
-  font-size: 24px;
+  color: var(--navy);
+  font-size: 22px;
 }
 
 .panel-head p {
   margin-top: 4px;
-  color: #263142;
+  color: #34445a;
+  font-size: 13px;
   font-weight: 800;
 }
 
 .table-wrap {
   overflow: auto;
+  padding: 10px;
 }
 
 table {
   width: 100%;
-  min-width: 1180px;
-  border-collapse: collapse;
+  min-width: 1120px;
+  border-collapse: separate;
+  border-spacing: 0 8px;
 }
 
 th,
 td {
-  padding: 12px 12px;
-  border-right: 2px solid var(--line);
-  border-bottom: 2px solid var(--line);
-  font-size: 14px;
+  padding: 13px 14px;
+  font-size: 13px;
   text-align: left;
   vertical-align: middle;
 }
 
 th {
-  background: #fff;
-  font-size: 14px;
+  color: var(--muted);
+  font-size: 11px;
   font-weight: 950;
   text-transform: uppercase;
 }
 
-td:first-child,
-th:first-child {
-  text-align: center;
+tbody tr {
+  filter: drop-shadow(0 8px 16px rgba(12, 24, 52, 0.06));
+}
+
+td {
+  background: #fff;
+  border-top: 1px solid #edf2f7;
+  border-bottom: 1px solid #edf2f7;
 }
 
 td:first-child {
+  border-left: 1px solid #edf2f7;
+  border-radius: 14px 0 0 14px;
+  color: var(--navy);
   font-weight: 950;
+  text-align: center;
+}
+
+td:last-child {
+  border-right: 1px solid #edf2f7;
+  border-radius: 0 14px 14px 0;
 }
 
 tr:hover td {
-  background: #f8fcff;
+  background: var(--sky-soft);
 }
 
 .gap-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(92px, 1fr));
   min-width: 330px;
-  border: 2px solid var(--line);
-  border-radius: 8px;
   overflow: hidden;
+  border: 1px solid #e1ca43;
+  border-radius: 14px;
+  background: #fff;
 }
 
 td:nth-last-child(2) .gap-grid {
@@ -395,8 +401,8 @@ td:nth-last-child(2) .gap-grid {
   display: grid;
   gap: 4px;
   min-height: 54px;
-  padding: 8px;
-  border-right: 2px solid var(--line);
+  padding: 9px 10px;
+  border-right: 1px solid #eedc70;
   background: #fff;
   text-align: right;
 }
@@ -406,13 +412,15 @@ td:nth-last-child(2) .gap-grid {
 }
 
 .gap-cell small {
-  font-size: 11px;
+  color: var(--navy);
+  font-size: 10px;
   font-weight: 950;
   text-transform: uppercase;
 }
 
 .gap-cell strong {
-  font-size: 14px;
+  color: #121212;
+  font-size: 13px;
   font-weight: 900;
 }
 
@@ -428,9 +436,9 @@ td:nth-last-child(2) .gap-grid {
 }
 
 @media (max-width: 1100px) {
-  .landing-actions,
+  .app-header,
   .summary-grid {
-    grid-template-columns: 1fr;
+    display: grid;
   }
 
   .filters {
@@ -439,18 +447,22 @@ td:nth-last-child(2) .gap-grid {
 }
 
 @media (max-width: 700px) {
-  .landing,
-  .dashboard {
-    padding: 16px;
+  .app {
+    padding: 14px;
   }
 
-  .dashboard-header,
-  .filters {
+  .app-header,
+  .filters,
+  .summary-grid {
     grid-template-columns: 1fr;
   }
 
-  .landing-card span {
-    font-size: 30px;
+  .view-tabs {
+    width: 100%;
+  }
+
+  .view-tab {
+    flex: 1;
   }
 }
 
@@ -458,44 +470,33 @@ td:nth-last-child(2) .gap-grid {
   </head>
   <body>
     <main class="app">
-      <section class="landing" id="landing-view">
-        <div class="landing-shell">
+      <header class="app-header">
+        <div>
           <p class="eyebrow">Dashboard Eligible Incentive</p>
-          <h1>Dashboard Eligible Incentive</h1>
-          <div class="landing-actions">
-            <button class="landing-card" data-open-view="bm" type="button">
-              <span>Eligible BM</span>
-              <small>Branch Manager incentive progress</small>
-            </button>
-            <button class="landing-card" data-open-view="agent" type="button">
-              <span>Eligible Agent</span>
-              <small>Weekly agent TH achievement</small>
-            </button>
-          </div>
-          <article class="notes">
-            <strong>Notes</strong>
-            <p>Dashboard ini bukan perhitungan kalkulasi incentive. Ini sebagai panduan sisa target yang harus dikejar untuk mendapatkan atau membuka TH incentive. Kalibrasi dilakukan di file terpisah.</p>
-          </article>
+          <h1 id="dashboard-title">Eligibility Incentive BM</h1>
         </div>
+        <nav class="view-tabs" aria-label="Pilih halaman">
+          <button class="view-tab active" data-open-view="bm" type="button">Eligible BM</button>
+          <button class="view-tab" data-open-view="agent" type="button">Eligible Agent</button>
+        </nav>
+      </header>
+
+      <section class="notes">
+        <strong>Notes</strong>
+        <p>Dashboard ini bukan perhitungan kalkulasi incentive. Ini sebagai panduan sisa target yang harus dikejar untuk mendapatkan atau membuka TH incentive. Kalibrasi dilakukan di file terpisah.</p>
       </section>
 
-      <section class="dashboard is-hidden" id="dashboard-view">
-        <header class="dashboard-header">
-          <button class="back-button" id="back-button" type="button">Back</button>
-          <div>
-            <p class="eyebrow" id="sheet-label">Tabsheet Eligible BM</p>
-            <h1 id="dashboard-title">Eligibility Incentive BM</h1>
-          </div>
-        </header>
+      <section class="dashboard" id="dashboard-view">
+        <p class="sheet-label" id="sheet-label">Tabsheet Eligible BM</p>
 
         <section class="filters" aria-label="Filter dashboard">
-          <label>
-            Bulan
-            <select id="month-filter"></select>
-          </label>
           <label id="branch-filter-wrap">
             Cabang
             <select id="branch-filter"></select>
+          </label>
+          <label>
+            Bulan
+            <select id="month-filter"></select>
           </label>
           <label id="region-filter-wrap">
             Region
@@ -509,7 +510,7 @@ td:nth-last-child(2) .gap-grid {
             Type
             <select id="type-filter"></select>
           </label>
-          <label>
+          <label id="status-filter-wrap">
             Status
             <select id="status-filter"></select>
           </label>
@@ -537,11 +538,7 @@ td:nth-last-child(2) .gap-grid {
           </article>
         </section>
 
-        <section class="toggle-row" id="bm-toggle-row" aria-label="Filter status BM">
-          <button class="status-toggle active" data-bm-status="" type="button">All</button>
-          <button class="status-toggle" data-bm-status="Eligible" type="button">Eligible</button>
-          <button class="status-toggle" data-bm-status="Not Eligible" type="button">Not Eligible</button>
-        </section>
+        <section class="toggle-row" id="quick-toggle-row" aria-label="Filter status cepat"></section>
 
         <section class="table-panel">
           <div class="panel-head">
@@ -575,7 +572,7 @@ const viewConfigs = {
     tableTitle: "Leaderboard Eligible BM",
     searchPlaceholder: "BM, cabang, region",
     typeKey: "type",
-    statusOptions: ["Eligible", "Not Eligible"],
+    quickStatuses: ["Eligible", "Not Eligible"],
     columns: [
       ["Rank", "rank"],
       ["Branch Manager", "manager"],
@@ -594,30 +591,27 @@ const viewConfigs = {
     tableTitle: "Leaderboard Eligible Agent",
     searchPlaceholder: "Agent, email, cabang",
     typeKey: "position",
-    statusOptions: ["TH 0", "TH 1", "TH 2", "TH 3"],
+    quickStatuses: ["TH 0", "TH 1", "TH 2", "TH 3"],
     columns: [
       ["Rank", "rank"],
       ["Agent", "agent"],
       ["Branch", "branch"],
+      ["Month", "month"],
       ["Week", "week"],
-      ["Posisi", "position"],
       ["Rev", "revenue"],
       ["Ach Rev", "ach"],
       ["Final", "finalEligibility"],
       ["Gap Target", "agentProgress"],
-      ["Final TH", "finalEligibility"],
+      ["Final TH", "finalTh"],
     ],
   },
 };
 
-let activeView = null;
-let bmQuickStatus = "";
+let activeView = "bm";
+let quickStatus = "";
 
 const els = {
-  landing: document.querySelector("#landing-view"),
-  dashboard: document.querySelector("#dashboard-view"),
-  openButtons: document.querySelectorAll("[data-open-view]"),
-  back: document.querySelector("#back-button"),
+  viewTabs: document.querySelectorAll("[data-open-view]"),
   sheetLabel: document.querySelector("#sheet-label"),
   title: document.querySelector("#dashboard-title"),
   month: document.querySelector("#month-filter"),
@@ -629,6 +623,7 @@ const els = {
   week: document.querySelector("#week-filter"),
   typeWrap: document.querySelector("#type-filter-wrap"),
   type: document.querySelector("#type-filter"),
+  statusWrap: document.querySelector("#status-filter-wrap"),
   status: document.querySelector("#status-filter"),
   search: document.querySelector("#search-filter"),
   reset: document.querySelector("#reset-filters"),
@@ -637,8 +632,7 @@ const els = {
   statusSummary: document.querySelector("#status-summary"),
   top: document.querySelector("#metric-top"),
   topDetail: document.querySelector("#metric-top-detail"),
-  bmToggleRow: document.querySelector("#bm-toggle-row"),
-  statusToggles: document.querySelectorAll("[data-bm-status]"),
+  quickToggleRow: document.querySelector("#quick-toggle-row"),
   tableTitle: document.querySelector("#table-title"),
   tableCaption: document.querySelector("#table-caption"),
   tableHead: document.querySelector("#leaderboard-head"),
@@ -699,18 +693,18 @@ function setupFilters() {
   const scopedRows = optionRows();
   const config = viewConfigs[activeView];
 
-  fillSelect(els.month, uniqueSorted(rows, "month"), "Semua bulan");
   fillSelect(els.branch, uniqueSorted(scopedRows, "branch"), "Semua cabang");
+  fillSelect(els.month, uniqueSorted(rows, "month"), "Semua bulan");
   fillSelect(els.region, uniqueSorted(scopedRows, "region"), "Semua region");
   fillSelect(els.week, uniqueSorted(scopedRows, "week"), "Semua week");
   fillSelect(els.type, uniqueSorted(scopedRows, config.typeKey), activeView === "bm" ? "Semua type" : "Semua posisi");
-  fillSelect(els.status, config.statusOptions, "Semua status");
+  fillSelect(els.status, config.quickStatuses, "Semua status");
 
   els.search.placeholder = config.searchPlaceholder;
+  els.regionWrap.classList.toggle("is-hidden", activeView !== "bm");
   els.weekWrap.classList.toggle("is-hidden", activeView !== "agent");
-  els.typeWrap.classList.toggle("is-hidden", false);
-  els.regionWrap.classList.toggle("is-hidden", activeView === "agent");
-  els.bmToggleRow.classList.toggle("is-hidden", activeView !== "bm");
+  els.typeWrap.classList.toggle("is-hidden", activeView !== "bm");
+  els.statusWrap.classList.add("is-hidden");
 }
 
 function filteredRows() {
@@ -719,21 +713,21 @@ function filteredRows() {
   const query = normalize(els.search.value);
 
   return rows
-    .filter((row) => !els.month.value || row.month === els.month.value)
     .filter((row) => !els.branch.value || row.branch === els.branch.value)
+    .filter((row) => !els.month.value || row.month === els.month.value)
     .filter((row) => activeView !== "bm" || !els.region.value || row.region === els.region.value)
     .filter((row) => activeView !== "agent" || !els.week.value || row.week === els.week.value)
-    .filter((row) => !els.type.value || row[config.typeKey] === els.type.value)
-    .filter((row) => !els.status.value || row.finalEligibility === els.status.value)
+    .filter((row) => activeView !== "bm" || !els.type.value || row[config.typeKey] === els.type.value)
     .filter((row) => {
-      if (activeView !== "bm" || !bmQuickStatus) return true;
-      return bmQuickStatus === "Eligible" ? isBmEligible(row) : !isBmEligible(row);
+      if (!quickStatus) return true;
+      if (activeView === "bm") return quickStatus === "Eligible" ? isBmEligible(row) : !isBmEligible(row);
+      return row.finalEligibility === quickStatus;
     })
     .filter((row) => {
       if (!query) return true;
       const haystack = activeView === "bm"
         ? [row.manager, row.branch, row.region, row.type, row.finalEligibility]
-        : [row.agent, row.email, row.branch, row.position, row.week, row.finalEligibility];
+        : [row.agent, row.email, row.branch, row.week, row.finalEligibility];
       return haystack.some((item) => normalize(item).includes(query));
     })
     .sort((a, b) => (b.ach || 0) - (a.ach || 0));
@@ -748,14 +742,13 @@ function statusCounts(rows) {
     ];
   }
 
-  return ["TH 0", "TH 1", "TH 2", "TH 3"].map((status) => [
+  return viewConfigs.agent.quickStatuses.map((status) => [
     status,
     rows.filter((row) => row.finalEligibility === status).length,
   ]);
 }
 
 function renderSummary(rows) {
-  const config = viewConfigs[activeView];
   const top = rows[0];
   const counts = statusCounts(rows);
 
@@ -773,7 +766,7 @@ function renderSummary(rows) {
     `;
   }).join("");
   els.top.textContent = top ? (activeView === "bm" ? top.manager : top.agent) : "-";
-  els.topDetail.textContent = top ? `${config.topLabel || ""} | ${percent(top.ach)} | ${rupiah(top.revenue)}` : "Belum ada data";
+  els.topDetail.textContent = top ? `${activeView === "bm" ? "BM" : "Agent"} | ${percent(top.ach)} | ${rupiah(top.revenue)}` : "Belum ada data";
 }
 
 function progressCell(items) {
@@ -811,11 +804,11 @@ function agentProgress(row) {
 
 function finalTh(row) {
   if (activeView === "agent") return row.finalEligibility || "-";
-  if (isBmEligible(row)) return "TH Open";
+  if (isBmEligible(row)) return "Eligible";
   if (row.gapTH2 <= 0) return "TH 2";
   if (row.gapTH1 <= 0) return "TH 1";
   if (row.gapTH0 <= 0) return "TH 0";
-  return "Need Rev";
+  return "Not Open";
 }
 
 function tableValue(row, key, index) {
@@ -840,78 +833,81 @@ function renderTable(rows) {
     : `<tr><td colspan="${config.columns.length}" class="empty">Tidak ada data untuk filter ini.</td></tr>`;
 }
 
+function renderQuickToggles() {
+  const config = viewConfigs[activeView];
+  els.quickToggleRow.innerHTML = [
+    `<button class="status-toggle ${quickStatus === "" ? "active" : ""}" data-quick-status="" type="button">All</button>`,
+    ...config.quickStatuses.map((status) => (
+      `<button class="status-toggle ${quickStatus === status ? "active" : ""}" data-quick-status="${status}" type="button">${status}</button>`
+    )),
+  ].join("");
+
+  els.quickToggleRow.querySelectorAll("[data-quick-status]").forEach((button) => {
+    button.addEventListener("click", () => {
+      quickStatus = button.dataset.quickStatus;
+      renderDashboard();
+    });
+  });
+}
+
 function renderDashboard() {
   const config = viewConfigs[activeView];
   const rows = filteredRows();
+  els.viewTabs.forEach((tab) => tab.classList.toggle("active", tab.dataset.openView === activeView));
   els.sheetLabel.textContent = config.label;
   els.title.textContent = config.title;
   els.tableTitle.textContent = config.tableTitle;
   els.tableCaption.textContent = `${rows.length.toLocaleString("id-ID")} record, sorted by Ach Revenue`;
+  renderQuickToggles();
   renderSummary(rows);
   renderTable(rows);
 }
 
-function openView(view) {
+function switchView(view) {
   activeView = view;
-  bmQuickStatus = "";
-  els.landing.classList.add("is-hidden");
-  els.dashboard.classList.remove("is-hidden");
-  document.querySelectorAll("[data-bm-status]").forEach((button) => {
-    button.classList.toggle("active", button.dataset.bmStatus === "");
-  });
+  quickStatus = "";
+  els.branch.value = "";
+  els.month.value = "";
+  els.region.value = "";
+  els.week.value = "";
+  els.type.value = "";
+  els.search.value = "";
   setupFilters();
   renderDashboard();
 }
 
 function resetFilters() {
-  els.month.value = "";
   els.branch.value = "";
+  els.month.value = "";
   els.region.value = "";
   els.week.value = "";
   els.type.value = "";
-  els.status.value = "";
   els.search.value = "";
-  bmQuickStatus = "";
-  document.querySelectorAll("[data-bm-status]").forEach((button) => {
-    button.classList.toggle("active", button.dataset.bmStatus === "");
-  });
+  quickStatus = "";
   setupFilters();
   renderDashboard();
 }
 
-els.openButtons.forEach((button) => {
-  button.addEventListener("click", () => openView(button.dataset.openView));
-});
-
-els.back.addEventListener("click", () => {
-  els.dashboard.classList.add("is-hidden");
-  els.landing.classList.remove("is-hidden");
+els.viewTabs.forEach((button) => {
+  button.addEventListener("click", () => switchView(button.dataset.openView));
 });
 
 els.month.addEventListener("input", () => {
   els.branch.value = "";
-  els.region.value = "";
   els.week.value = "";
   els.type.value = "";
-  els.status.value = "";
   setupFilters();
   renderDashboard();
 });
 
-[els.branch, els.region, els.week, els.type, els.status, els.search].forEach((control) => {
+[els.branch, els.region, els.week, els.type, els.search].forEach((control) => {
   control.addEventListener("input", renderDashboard);
 });
 
-els.statusToggles.forEach((button) => {
-  button.addEventListener("click", () => {
-    bmQuickStatus = button.dataset.bmStatus;
-    els.status.value = bmQuickStatus;
-    els.statusToggles.forEach((item) => item.classList.toggle("active", item === button));
-    renderDashboard();
-  });
-});
-
 els.reset.addEventListener("click", resetFilters);
+
+setupFilters();
+renderDashboard();
 
     </script>
   </body>

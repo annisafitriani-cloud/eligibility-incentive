@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard Eligible Incentive</title>
+    <title>Dashboard Eligible Incentive Indotim 1</title>
     <style>
 :root {
   color-scheme: light;
@@ -116,18 +116,34 @@ p {
 
 .notes {
   margin: 18px 0;
-  padding: 16px 18px;
-  border: 1px solid #f0df83;
-  border-radius: 16px;
-  background: linear-gradient(135deg, #ffffff, #eef7ff);
-  box-shadow: 0 12px 28px rgba(12, 24, 52, 0.08);
+  padding: 18px 20px;
+  border: 1px solid rgba(245, 204, 56, 0.65);
+  border-radius: 20px;
+  background:
+    linear-gradient(135deg, rgba(245, 204, 56, 0.23), rgba(91, 185, 222, 0.12)),
+    #fff;
+  box-shadow: 0 18px 36px rgba(12, 24, 52, 0.12);
 }
 
 .notes strong {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 10px;
   margin-bottom: 5px;
   color: var(--navy);
-  font-size: 16px;
+  font-size: 18px;
+}
+
+.note-icon,
+.scheme-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--yellow), #fff09a);
+  color: var(--navy);
+  font-weight: 950;
 }
 
 .notes p {
@@ -142,6 +158,84 @@ p {
 
 .sheet-label {
   color: var(--navy-3);
+}
+
+.scheme-panel {
+  margin-bottom: 18px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background:
+    linear-gradient(135deg, rgba(7, 17, 38, 0.96), rgba(23, 72, 138, 0.92)),
+    var(--navy);
+  color: #fff;
+  box-shadow: var(--shadow);
+}
+
+.scheme-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.scheme-head h2 {
+  font-size: 20px;
+}
+
+.scheme-head p {
+  margin-top: 4px;
+  color: #cfe3f8;
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.scheme-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.scheme-card {
+  min-height: 132px;
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.scheme-card span,
+.scheme-card strong,
+.scheme-card em {
+  display: block;
+}
+
+.scheme-card span {
+  color: var(--yellow);
+  font-weight: 950;
+}
+
+.scheme-card strong {
+  margin: 8px 0;
+  color: #fff;
+  font-size: 22px;
+}
+
+.scheme-card em {
+  width: fit-content;
+  margin-bottom: 9px;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: var(--yellow);
+  color: var(--navy);
+  font-style: normal;
+  font-weight: 950;
+}
+
+.scheme-card p {
+  color: #d7e7f7;
+  font-size: 12px;
+  line-height: 1.45;
 }
 
 .filters {
@@ -248,7 +342,7 @@ input:focus {
 
 .status-line {
   display: grid;
-  grid-template-columns: 92px minmax(80px, 1fr) 58px 42px;
+  grid-template-columns: minmax(92px, 1fr) minmax(80px, 1fr) 58px 42px;
   align-items: center;
   gap: 9px;
 }
@@ -319,6 +413,7 @@ input:focus {
   display: grid;
   align-items: flex-end;
   justify-content: center;
+  justify-items: center;
   gap: 18px;
   padding: 18px 20px;
   background: linear-gradient(90deg, var(--navy), var(--navy-2) 72%, rgba(245, 204, 56, 0.9));
@@ -328,6 +423,7 @@ input:focus {
 .panel-head h2 {
   color: #fff;
   font-size: 22px;
+  text-align: center;
 }
 
 .panel-head p {
@@ -484,6 +580,10 @@ tr:hover td {
   .filters {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .scheme-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 700px) {
@@ -493,6 +593,7 @@ tr:hover td {
 
   .app-header,
   .filters,
+  .scheme-grid,
   .summary-grid {
     grid-template-columns: 1fr;
   }
@@ -512,7 +613,7 @@ tr:hover td {
     <main class="app">
       <header class="app-header">
         <div>
-          <p class="eyebrow">Dashboard Eligible Incentive</p>
+          <p class="eyebrow">Dashboard Eligible Incentive Indotim 1</p>
           <h1 id="dashboard-title">Eligibility Incentive BM</h1>
         </div>
         <nav class="view-tabs" aria-label="Pilih halaman">
@@ -522,12 +623,23 @@ tr:hover td {
       </header>
 
       <section class="notes">
-        <strong>Notes</strong>
+        <strong><span class="note-icon">!</span> Notes</strong>
         <p>Dashboard ini bukan perhitungan kalkulasi incentive. Ini sebagai panduan sisa target yang harus dikejar untuk mendapatkan atau membuka TH incentive. Kalibrasi dilakukan di file terpisah.</p>
       </section>
 
       <section class="dashboard" id="dashboard-view">
         <p class="sheet-label" id="sheet-label">Tabsheet Eligible BM</p>
+
+        <section class="scheme-panel" aria-label="Ketentuan incentive">
+          <div class="scheme-head">
+            <span class="scheme-icon">%</span>
+            <div>
+              <h2 id="scheme-title">Ketentuan BM Incentive</h2>
+              <p id="scheme-subtitle">Range achievement dan requirement pembuka TH incentive.</p>
+            </div>
+          </div>
+          <div class="scheme-grid" id="scheme-grid"></div>
+        </section>
 
         <section class="filters" aria-label="Filter dashboard">
           <label id="branch-filter-wrap">
@@ -613,6 +725,11 @@ const viewConfigs = {
     searchPlaceholder: "BM, cabang, region",
     typeKey: "type",
     quickStatuses: ["Eligible", "Not Eligible"],
+    scheme: [
+      { th: "TH 0", range: "60% - 89%", incentive: "0.30%", detail: "Online revenue min. 3-4 juta dan min. 4 trx online" },
+      { th: "TH 1", range: "90% - 119%", incentive: "0.50% - 0.75%", detail: "Online revenue min. 3-6 juta dan min. 6 trx online" },
+      { th: "TH 2", range: "120% Above", incentive: "1.00% - 1.50%", detail: "Online revenue min. 3-9 juta dan min. 9 trx online" },
+    ],
     columns: [
       ["Rank", "rank"],
       ["Branch Manager", "manager"],
@@ -631,7 +748,13 @@ const viewConfigs = {
     tableTitle: "Leaderboard Eligible Agent",
     searchPlaceholder: "Agent, email, cabang",
     typeKey: "position",
-    quickStatuses: ["TH 0", "TH 1", "TH 2", "TH 3"],
+    quickStatuses: ["TH 0", "TH 1", "TH 2", "TH 3", "Tidak Eligible"],
+    scheme: [
+      { th: "TH 0", range: "50% - 74%", incentive: "0.50% / 5.00%", detail: "Min. 1 user online atau achievement revenue sesuai target weekly" },
+      { th: "TH 1", range: "75% - 99%", incentive: "1.60% / 7.70%", detail: "Min. 2 user online atau achievement revenue weekly" },
+      { th: "TH 2", range: "100% - 124%", incentive: "2.00% / 8.80%", detail: "Min. 3 user online atau achievement revenue weekly" },
+      { th: "TH 3", range: "125% Above", incentive: "3.00% / 11.00%", detail: "Min. 5 user online atau achievement revenue weekly" },
+    ],
     columns: [
       ["Rank", "rank"],
       ["Agent", "agent"],
@@ -639,7 +762,6 @@ const viewConfigs = {
       ["Month", "month"],
       ["Week", "week"],
       ["Ach Rev", "ach"],
-      ["Final Eligibility", "finalEligibility"],
       ["Gap Target", "agentProgress"],
       ["Final TH", "finalTh"],
     ],
@@ -672,6 +794,9 @@ const els = {
   top: document.querySelector("#metric-top"),
   topDetail: document.querySelector("#metric-top-detail"),
   quickToggleRow: document.querySelector("#quick-toggle-row"),
+  schemeTitle: document.querySelector("#scheme-title"),
+  schemeSubtitle: document.querySelector("#scheme-subtitle"),
+  schemeGrid: document.querySelector("#scheme-grid"),
   tableTitle: document.querySelector("#table-title"),
   tableCaption: document.querySelector("#table-caption"),
   tableHead: document.querySelector("#leaderboard-head"),
@@ -883,6 +1008,22 @@ function statusBadge(value, extraClass = "") {
   return `<span class="status-badge ${tone} ${extraClass}">${status}</span>`;
 }
 
+function renderScheme() {
+  const config = viewConfigs[activeView];
+  els.schemeTitle.textContent = activeView === "bm" ? "Ketentuan BM Incentive" : "Ketentuan Agent Incentive";
+  els.schemeSubtitle.textContent = activeView === "bm"
+    ? "Tier target revenue dan requirement online product untuk membuka TH."
+    : "Penentuan TH Agent berdasarkan achievement weekly atau jumlah user online.";
+  els.schemeGrid.innerHTML = config.scheme.map((item) => `
+    <article class="scheme-card">
+      <span>${item.th}</span>
+      <strong>${item.range}</strong>
+      <em>${item.incentive}</em>
+      <p>${item.detail}</p>
+    </article>
+  `).join("");
+}
+
 function renderTable(rows) {
   const config = viewConfigs[activeView];
   els.tableHead.innerHTML = `<tr>${config.columns.map(([label]) => `<th>${label}</th>`).join("")}</tr>`;
@@ -920,6 +1061,7 @@ function renderDashboard() {
   els.title.textContent = config.title;
   els.tableTitle.textContent = config.tableTitle;
   els.tableCaption.textContent = `${rows.length.toLocaleString("id-ID")} record, sorted by Ach Revenue`;
+  renderScheme();
   renderQuickToggles();
   renderSummary(rows);
   renderTable(rows);

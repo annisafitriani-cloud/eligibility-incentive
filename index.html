@@ -1162,39 +1162,32 @@ tr:hover td {
       </div>
       <form class="calculator-form" id="calculator-form">
         <label>
-          Skema
-          <select id="calc-segment">
-            <option value="branch">Agent Branch</option>
-            <option value="kids">Agent Branch Kids</option>
-          </select>
-        </label>
-        <label>
-          Tipe Transaksi
-          <select id="calc-transaction">
-            <option value="new">New Transactions</option>
-            <option value="renewal">Renewal</option>
-          </select>
-        </label>
-        <label>
-          Product Category
-          <select id="calc-category"></select>
+          Total Revenue (1 Minggu)
+          <input id="calc-total-revenue" type="number" min="0" step="1000" placeholder="Contoh 12000000" />
         </label>
         <label>
           Final TH
-          <select id="calc-th">
-            <option>TH 0</option>
-            <option>TH 1</option>
-            <option>TH 2</option>
-            <option>TH 3</option>
-          </select>
+          <input id="calc-th" type="text" value="Tidak Eligible" readonly />
         </label>
         <label>
-          Revenue
-          <input id="calc-revenue" type="number" min="0" step="1000" placeholder="Contoh 10000000" />
+          Revenue Offline (BAC, EAC, RGP Offline)
+          <input class="calc-revenue-input" id="calc-offline" data-category="offline" type="number" min="0" step="1000" placeholder="0" />
+        </label>
+        <label>
+          Others (Kids, RGP online, ruanguji, dll)
+          <input class="calc-revenue-input" id="calc-others" data-category="others" type="number" min="0" step="1000" placeholder="0" />
+        </label>
+        <label>
+          Wonderlab
+          <input class="calc-revenue-input" id="calc-wonderlab" data-category="wonderlab" type="number" min="0" step="1000" placeholder="0" />
+        </label>
+        <label>
+          Ruanguji Kitab
+          <input class="calc-revenue-input" id="calc-kitab" data-category="kitab" type="number" min="0" step="1000" placeholder="0" />
         </label>
         <div class="calculator-result">
-          <span>Rate Incentive</span>
-          <strong id="calc-rate">0%</strong>
+          <span>Final TH Berdasarkan Total Revenue</span>
+          <strong id="calc-final-th">Tidak Eligible</strong>
           <span>Estimasi Incentive</span>
           <strong id="calc-result">Rp0</strong>
         </div>
@@ -1306,12 +1299,10 @@ const els = {
   schemeModalClose: document.querySelector("#scheme-modal-close"),
   calculatorModal: document.querySelector("#calculator-modal"),
   calculatorModalClose: document.querySelector("#calculator-modal-close"),
-  calcSegment: document.querySelector("#calc-segment"),
-  calcTransaction: document.querySelector("#calc-transaction"),
-  calcCategory: document.querySelector("#calc-category"),
+  calcTotalRevenue: document.querySelector("#calc-total-revenue"),
   calcTh: document.querySelector("#calc-th"),
-  calcRevenue: document.querySelector("#calc-revenue"),
-  calcRate: document.querySelector("#calc-rate"),
+  calcRevenueInputs: document.querySelectorAll(".calc-revenue-input"),
+  calcFinalTh: document.querySelector("#calc-final-th"),
   calcResult: document.querySelector("#calc-result"),
   tableTitle: document.querySelector("#table-title"),
   tableCaption: document.querySelector("#table-caption"),
@@ -1687,64 +1678,37 @@ function renderScheme() {
   `).join("");
 }
 
-const incentiveRates = {
-  branch: {
-    new: {
-      offline: [0.005, 0.016, 0.02, 0.03],
-      online: [0.05, 0.077, 0.088, 0.11],
-      others: [0.01, 0.018, 0.033, 0.033],
-      wonderlab: [0.01, 0.0178, 0.03, 0.03],
-      kitab: [0.05, 0.05, 0.05, 0.05],
-    },
-    renewal: {
-      offline: [0.006, 0.017, 0.022, 0.033],
-      online: [0.05, 0.077, 0.088, 0.11],
-      others: [0.01, 0.018, 0.033, 0.033],
-      wonderlab: [0.01, 0.0178, 0.03, 0.03],
-      kitab: [0.05, 0.05, 0.05, 0.05],
-    },
-  },
-  kids: {
-    new: {
-      offline: [0, 0.016, 0.02, 0.03],
-      online: [0, 0.077, 0.088, 0.11],
-      wonderlab: [0.01, 0.0178, 0.03, 0.033],
-      kids: [0.01, 0.018, 0.033, 0.033],
-      others: [0, 0.017, 0.03, 0.03],
-    },
-    renewal: {
-      offline: [0, 0.017, 0.022, 0.033],
-      online: [0, 0.077, 0.088, 0.11],
-      wonderlab: [0.01, 0.0178, 0.03, 0.033],
-      kids: [0.01, 0.018, 0.033, 0.033],
-      others: [0, 0.017, 0.03, 0.03],
-    },
-  },
+const agentNewTransactionRates = {
+  offline: [0.005, 0.016, 0.02, 0.03],
+  others: [0.01, 0.018, 0.033, 0.033],
+  wonderlab: [0.01, 0.0178, 0.03, 0.03],
+  kitab: [0.05, 0.05, 0.05, 0.05],
 };
 
-const categoryLabels = {
-  offline: "Offline / Hybrid",
-  online: "Online",
-  others: "Others",
-  wonderlab: "Wonderlab",
-  kitab: "Ruanguji Kitab",
-  kids: "Kids Product",
-};
+function thFromWeeklyRevenue(totalRevenue) {
+  if (totalRevenue >= 12500000) return "TH 3";
+  if (totalRevenue >= 10000000) return "TH 2";
+  if (totalRevenue >= 7500000) return "TH 1";
+  if (totalRevenue >= 5000000) return "TH 0";
+  return "Tidak Eligible";
+}
 
-function updateCalculatorCategories() {
-  const rates = incentiveRates[els.calcSegment.value][els.calcTransaction.value];
-  els.calcCategory.innerHTML = Object.keys(rates)
-    .map((key) => `<option value="${key}">${categoryLabels[key]}</option>`)
-    .join("");
+function thIndex(th) {
+  return Number(String(th).replace("TH ", ""));
 }
 
 function calculateIncentive() {
-  const rates = incentiveRates[els.calcSegment.value][els.calcTransaction.value][els.calcCategory.value] || [0, 0, 0, 0];
-  const thIndex = Number(els.calcTh.value.replace("TH ", "")) || 0;
-  const rate = rates[thIndex] || 0;
-  const revenue = Number(els.calcRevenue.value || 0);
-  els.calcRate.textContent = `${(rate * 100).toLocaleString("id-ID", { maximumFractionDigits: 2 })}%`;
-  els.calcResult.textContent = rupiah(revenue * rate);
+  const totalRevenue = Number(els.calcTotalRevenue.value || 0);
+  const finalTh = thFromWeeklyRevenue(totalRevenue);
+  const index = finalTh.startsWith("TH") ? thIndex(finalTh) : -1;
+  const totalIncentive = [...els.calcRevenueInputs].reduce((sum, input) => {
+    const revenue = Number(input.value || 0);
+    const rate = index >= 0 ? agentNewTransactionRates[input.dataset.category][index] : 0;
+    return sum + revenue * rate;
+  }, 0);
+  els.calcTh.value = finalTh;
+  els.calcFinalTh.textContent = finalTh;
+  els.calcResult.textContent = rupiah(totalIncentive);
 }
 
 function renderTable(rows) {
@@ -1840,7 +1804,6 @@ els.schemeModal.addEventListener("click", (event) => {
   if (event.target === els.schemeModal) els.schemeModal.close();
 });
 els.incentiveCalculatorButton.addEventListener("click", () => {
-  updateCalculatorCategories();
   calculateIncentive();
   els.calculatorModal.showModal();
 });
@@ -1848,13 +1811,7 @@ els.calculatorModalClose.addEventListener("click", () => els.calculatorModal.clo
 els.calculatorModal.addEventListener("click", (event) => {
   if (event.target === els.calculatorModal) els.calculatorModal.close();
 });
-[els.calcSegment, els.calcTransaction].forEach((control) => {
-  control.addEventListener("input", () => {
-    updateCalculatorCategories();
-    calculateIncentive();
-  });
-});
-[els.calcCategory, els.calcTh, els.calcRevenue].forEach((control) => {
+[els.calcTotalRevenue, ...els.calcRevenueInputs].forEach((control) => {
   control.addEventListener("input", calculateIncentive);
 });
 els.nextLevelLeft.addEventListener("click", () => {
@@ -1865,7 +1822,6 @@ els.nextLevelRight.addEventListener("click", () => {
 });
 
 setupFilters();
-updateCalculatorCategories();
 calculateIncentive();
 renderDashboard();
 

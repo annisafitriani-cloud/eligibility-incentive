@@ -348,10 +348,37 @@ p {
 
 .calculator-form {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 18px 22px;
   padding: 20px;
   overflow: auto;
+}
+
+.calculator-picker,
+.calculator-entry,
+.calculator-kpi {
+  display: grid;
+  gap: 14px;
+}
+
+.calculator-entry {
+  grid-template-rows: auto 1fr;
+}
+
+.calculator-product-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid rgba(245, 204, 56, 0.72);
+  border-radius: 20px;
+  background: #fffdf0;
+}
+
+.calculator-kpi {
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
 }
 
 .calc-field {
@@ -377,6 +404,14 @@ p {
 .calc-field-input {
   border-color: rgba(245, 204, 56, 0.86);
   background: #fffdf0;
+}
+
+.calculator-product-grid .calc-field-input {
+  background: #fff;
+}
+
+.calc-total-field {
+  min-height: 128px;
 }
 
 .calc-field-input::after {
@@ -1085,7 +1120,12 @@ tr:hover td {
   }
 
   .calculator-form {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: 1fr;
+  }
+
+  .calculator-kpi,
+  .calculator-product-grid {
+    grid-template-columns: 1fr 1fr;
   }
 
   .filters {
@@ -1107,6 +1147,11 @@ tr:hover td {
   }
 
   .calculator-form {
+    grid-template-columns: 1fr;
+  }
+
+  .calculator-kpi,
+  .calculator-product-grid {
     grid-template-columns: 1fr;
   }
 
@@ -1287,52 +1332,60 @@ tr:hover td {
       </div>
       <form class="calculator-form" id="calculator-form">
         <input id="calc-target" type="hidden" value="0" />
-        <label class="calc-field calc-field-select">
-          Agent
-          <input id="calc-agent-search" type="search" list="calc-agent-options" placeholder="Ketik nama agent" autocomplete="off" />
-          <input id="calc-agent" type="hidden" />
-          <datalist id="calc-agent-options"></datalist>
-        </label>
-        <label class="calc-field calc-field-select">
-          Bulan
-          <select id="calc-month"></select>
-        </label>
-        <label class="calc-field calc-field-select">
-          Week
-          <select id="calc-week"></select>
-        </label>
-        <label class="calc-field calc-field-input">
-          Total Revenue (1 Minggu)
-          <input class="calc-money-input" id="calc-total-revenue" type="text" inputmode="numeric" placeholder="Rp0" />
-        </label>
-        <label class="calc-field calc-field-auto">
-          Achievement
-          <input id="calc-achievement" type="text" value="0%" readonly />
-        </label>
-        <label class="calc-field calc-field-auto">
-          Final TH
-          <input id="calc-th" type="text" value="Tidak Eligible" readonly />
-        </label>
-        <label class="calc-field calc-field-input">
-          Revenue Offline (BAC, EAC, RGP Offline)
-          <input class="calc-revenue-input calc-money-input" id="calc-offline" data-category="offline" type="text" inputmode="numeric" placeholder="Rp0" />
-        </label>
-        <label class="calc-field calc-field-input">
-          Revenue Online (RB, BAON, EA Online)
-          <input class="calc-revenue-input calc-money-input" id="calc-online" data-category="online" type="text" inputmode="numeric" placeholder="Rp0" />
-        </label>
-        <label class="calc-field calc-field-input">
-          Others (Kids, RGP online, ruanguji, dll)
-          <input class="calc-revenue-input calc-money-input" id="calc-others" data-category="others" type="text" inputmode="numeric" placeholder="Rp0" />
-        </label>
-        <label class="calc-field calc-field-input">
-          Wonderlab
-          <input class="calc-revenue-input calc-money-input" id="calc-wonderlab" data-category="wonderlab" type="text" inputmode="numeric" placeholder="Rp0" />
-        </label>
-        <label class="calc-field calc-field-input">
-          Ruanguji Kitab
-          <input class="calc-revenue-input calc-money-input" id="calc-kitab" data-category="kitab" type="text" inputmode="numeric" placeholder="Rp0" />
-        </label>
+        <section class="calculator-picker">
+          <label class="calc-field calc-field-select">
+            Agent
+            <input id="calc-agent-search" type="search" list="calc-agent-options" placeholder="Ketik nama agent" autocomplete="off" />
+            <input id="calc-agent" type="hidden" />
+            <datalist id="calc-agent-options"></datalist>
+          </label>
+          <label class="calc-field calc-field-select">
+            Bulan
+            <select id="calc-month"></select>
+          </label>
+          <label class="calc-field calc-field-select">
+            Week
+            <select id="calc-week"></select>
+          </label>
+        </section>
+        <section class="calculator-entry">
+          <label class="calc-field calc-field-input calc-total-field">
+            Total Revenue (1 Minggu)
+            <input class="calc-money-input" id="calc-total-revenue" type="text" inputmode="numeric" placeholder="Rp0" />
+          </label>
+          <div class="calculator-product-grid">
+            <label class="calc-field calc-field-input">
+              Revenue Offline
+              <input class="calc-revenue-input calc-money-input" id="calc-offline" data-category="offline" type="text" inputmode="numeric" placeholder="Rp0" />
+            </label>
+            <label class="calc-field calc-field-input">
+              Revenue Online
+              <input class="calc-revenue-input calc-money-input" id="calc-online" data-category="online" type="text" inputmode="numeric" placeholder="Rp0" />
+            </label>
+            <label class="calc-field calc-field-input">
+              Others
+              <input class="calc-revenue-input calc-money-input" id="calc-others" data-category="others" type="text" inputmode="numeric" placeholder="Rp0" />
+            </label>
+            <label class="calc-field calc-field-input">
+              Wonderlab
+              <input class="calc-revenue-input calc-money-input" id="calc-wonderlab" data-category="wonderlab" type="text" inputmode="numeric" placeholder="Rp0" />
+            </label>
+            <label class="calc-field calc-field-input">
+              Ruanguji Kitab
+              <input class="calc-revenue-input calc-money-input" id="calc-kitab" data-category="kitab" type="text" inputmode="numeric" placeholder="Rp0" />
+            </label>
+          </div>
+        </section>
+        <section class="calculator-kpi">
+          <label class="calc-field calc-field-auto">
+            Achievement
+            <input id="calc-achievement" type="text" value="0%" readonly />
+          </label>
+          <label class="calc-field calc-field-auto">
+            Final TH
+            <input id="calc-th" type="text" value="Tidak Eligible" readonly />
+          </label>
+        </section>
         <div class="calculator-result">
           <span>Final TH Berdasarkan Total Revenue</span>
           <strong id="calc-final-th">Tidak Eligible</strong>

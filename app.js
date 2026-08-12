@@ -584,13 +584,15 @@ function bmProgress(row) {
       ["TH 2", "empty"],
     ], "bm");
   }
-  const th0Unlocked = normalize(row.revenueProgress) === "unlocked";
-  const th1Unlocked = th0Unlocked && row.gapTH0 <= 0;
-  const th2Unlocked = th1Unlocked && row.gapTH1 <= 0;
+
+  const final = finalTh(row);
+  const finalIndex = final.startsWith("TH") ? thIndex(final) : -1;
+  const fallbackGapTH2 = row.gapTH2 > 0 ? row.gapTH2 : row.gapTH1;
+
   return progressCell([
-    ["TH 0", th0Unlocked ? "Unlocked" : row.gapTH0],
-    ["TH 1", th1Unlocked ? "Unlocked" : row.gapTH0],
-    ["TH 2", th2Unlocked ? "Unlocked" : row.gapTH1],
+    ["TH 0", finalIndex >= 0 ? "Unlocked" : row.gapTH0],
+    ["TH 1", finalIndex >= 1 ? "Unlocked" : row.gapTH1],
+    ["TH 2", finalIndex >= 2 ? "Unlocked" : fallbackGapTH2],
   ], "bm");
 }
 

@@ -272,8 +272,8 @@ function isRegionCells(cells) {
 
 function buildBmRowsFromCells(rows) {
   return rows.filter(isRegionCells).map((cells) => {
-    const finalEligibility = cleanSheetText(valueAt(cells, 30));
-    const gapTH0Text = cleanSheetText(valueAt(cells, 31));
+    const finalEligibility = cleanSheetText(valueAt(cells, 29));
+    const gapTH0Text = cleanSheetText(valueAt(cells, 30));
     return {
       region: cleanSheetText(valueAt(cells, 0)),
       branch: cleanSheetText(valueAt(cells, 1)),
@@ -293,9 +293,9 @@ function buildBmRowsFromCells(rows) {
       trxOnlineCheck: cleanSheetText(valueAt(cells, 28)),
       finalEligibility,
       revenueProgress: gapTH0Text || (finalEligibility.startsWith("TH") ? "Unlocked" : "0"),
-      gapTH0: Math.round(sheetNumber(valueAt(cells, 32))),
-      gapTH1: Math.round(sheetNumber(valueAt(cells, 33))),
-      gapTH2: 0,
+      gapTH0: Math.round(sheetNumber(valueAt(cells, 31))),
+      gapTH1: Math.round(sheetNumber(valueAt(cells, 32))),
+      gapTH2: Math.round(sheetNumber(valueAt(cells, 33))),
     };
   });
 }
@@ -366,7 +366,7 @@ function compareLatestPeriod(a, b) {
 }
 
 function isBmEligible(row) {
-  return normalize(row.finalEligibility) === "eligible";
+  return statusKey(row.finalEligibility) === "eligible";
 }
 
 function optionRows() {
@@ -417,7 +417,7 @@ function filteredRows() {
     .filter((row) => activeView !== "bm" || !els.type.value || row[config.typeKey] === els.type.value)
     .filter((row) => {
       if (!quickStatus) return true;
-      if (activeView === "bm") return quickStatus === "Eligible" ? isBmEligible(row) : !isBmEligible(row);
+      if (activeView === "bm") return statusKey(quickStatus) === "eligible" ? isBmEligible(row) : !isBmEligible(row);
       return normalize(finalTh(row)) === quickStatusKey;
     })
     .filter((row) => {

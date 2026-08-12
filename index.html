@@ -377,8 +377,10 @@ p {
 
 .calculator-kpi {
   grid-column: 1 / -1;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  align-items: stretch;
+  grid-template-columns: repeat(2, max-content);
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
 }
 
 .calc-field {
@@ -420,20 +422,34 @@ p {
   color: var(--navy);
 }
 
-.calc-field-auto {
-  border-color: rgba(91, 185, 222, 0.55);
-  background: var(--sky-soft);
-}
-
-.calc-field-auto::after {
-  content: "Auto";
-  background: var(--navy-3);
-  color: #fff;
-}
-
 .calc-field-select {
   border-color: rgba(16, 44, 93, 0.16);
   background: #f8fbff;
+}
+
+.calc-kpi-pill {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 54px;
+  padding: 9px 16px;
+  border: 1px solid rgba(91, 185, 222, 0.55);
+  border-radius: 999px;
+  background: var(--sky-soft);
+}
+
+.calc-kpi-pill span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.calc-kpi-pill strong {
+  color: var(--navy-3);
+  font-size: 18px;
+  font-weight: 950;
+  white-space: nowrap;
 }
 
 .calc-field-select input[type="search"] {
@@ -539,12 +555,6 @@ input {
 
 .calc-field-input input {
   border-color: rgba(245, 204, 56, 0.95);
-}
-
-.calc-field-auto input {
-  border-color: rgba(91, 185, 222, 0.7);
-  background: #eefaff;
-  color: var(--navy-3);
 }
 
 select:focus,
@@ -1367,24 +1377,20 @@ tr:hover td {
               <input class="calc-revenue-input calc-money-input" id="calc-others" data-category="others" type="text" inputmode="numeric" placeholder="Rp0" />
             </label>
             <label class="calc-field calc-field-input">
-              Wonderlab
-              <input class="calc-revenue-input calc-money-input" id="calc-wonderlab" data-category="wonderlab" type="text" inputmode="numeric" placeholder="Rp0" />
-            </label>
-            <label class="calc-field calc-field-input">
               Ruanguji Kitab
               <input class="calc-revenue-input calc-money-input" id="calc-kitab" data-category="kitab" type="text" inputmode="numeric" placeholder="Rp0" />
             </label>
           </div>
         </section>
         <section class="calculator-kpi">
-          <label class="calc-field calc-field-auto">
-            Achievement
-            <input id="calc-achievement" type="text" value="0%" readonly />
-          </label>
-          <label class="calc-field calc-field-auto">
-            Final TH
-            <input id="calc-th" type="text" value="Tidak Eligible" readonly />
-          </label>
+          <div class="calc-kpi-pill">
+            <span>Achievement</span>
+            <strong id="calc-achievement">0%</strong>
+          </div>
+          <div class="calc-kpi-pill">
+            <span>Final TH</span>
+            <strong id="calc-th">Tidak Eligible</strong>
+          </div>
         </section>
         <div class="calculator-result">
           <span>Final TH Berdasarkan Total Revenue</span>
@@ -2053,7 +2059,6 @@ const agentNewTransactionRates = {
   offline: [0.005, 0.016, 0.02, 0.03],
   online: [0.05, 0.077, 0.088, 0.11],
   others: [0.01, 0.018, 0.033, 0.033],
-  wonderlab: [0.01, 0.0178, 0.03, 0.03],
   kitab: [0.05, 0.05, 0.05, 0.05],
 };
 
@@ -2061,7 +2066,6 @@ const calculatorCategories = {
   offline: "Revenue Offline",
   online: "Revenue Online",
   others: "Others",
-  wonderlab: "Wonderlab",
   kitab: "Ruanguji Kitab",
 };
 
@@ -2157,8 +2161,8 @@ function calculateIncentive() {
   const totalIncentive = breakdown.reduce((sum, item) => sum + item.incentive, 0);
 
   els.calcTarget.value = target || 0;
-  els.calcAchievement.value = target ? percent(achievement) : "0%";
-  els.calcTh.value = finalTh;
+  els.calcAchievement.textContent = target ? percent(achievement) : "0%";
+  els.calcTh.textContent = finalTh;
   els.calcFinalTh.textContent = finalTh;
   els.calcResult.textContent = rupiah(totalIncentive);
   els.calcBreakdownBody.innerHTML = breakdown.map((item) => `

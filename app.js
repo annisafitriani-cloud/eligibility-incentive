@@ -86,10 +86,9 @@ const els = {
   agentActionPanel: document.querySelector("#agent-action-panel"),
   agentFocusTitle: document.querySelector("#agent-focus-title"),
   agentFocusSubtitle: document.querySelector("#agent-focus-subtitle"),
-  dayProgressRing: document.querySelector("#day-progress-ring"),
-  dayRingValue: document.querySelector("#day-ring-value"),
   dayProgressText: document.querySelector("#day-progress-text"),
   dayRemainingText: document.querySelector("#day-remaining-text"),
+  dayProgressFill: document.querySelector("#day-progress-fill"),
   nextLevelPanel: document.querySelector("#next-level-panel"),
   nextLevelTrack: document.querySelector("#next-level-track"),
   nextLevelLeft: document.querySelector("#next-level-left"),
@@ -130,6 +129,23 @@ const els = {
 
 function normalize(value) {
   return String(value ?? "").trim().toLowerCase();
+}
+
+function statusKey(value) {
+  const key = normalize(value).replace(/\s+/g, " ");
+  const thMatch = key.match(/^th\s*(\d)$/);
+  if (thMatch) return `th ${thMatch[1]}`;
+  if (key.includes("tidak") || key.includes("not")) return "not eligible";
+  return key;
+}
+
+function canonicalStatus(value) {
+  const key = statusKey(value);
+  if (key === "not eligible") return "Not Eligible";
+  const thMatch = key.match(/^th (\d)$/);
+  if (thMatch) return `TH ${thMatch[1]}`;
+  if (key === "eligible") return "Eligible";
+  return String(value || "Not Eligible");
 }
 
 async function sha256Hex(value) {
@@ -496,10 +512,9 @@ function renderAgentAction(rows) {
   els.agentFocusSubtitle.textContent = target
     ? `Hari ini hari ${progress.dayName}. Pantau sisa target dan aktivitas closing minggu ini.`
     : `Hari ini ${progress.dayName}. Gunakan filter nama agent untuk melihat fokus personal.`;
-  els.dayProgressRing.style.setProperty("--day-progress", `${progress.percent}%`);
-  els.dayRingValue.textContent = `${progress.passed}/6`;
-  els.dayProgressText.textContent = `${progress.dayName}, hari ke-${progress.passed}`;
-  els.dayRemainingText.textContent = `${progress.remaining} hari lagi menuju akhir minggu`;
+  els.dayProgressText.textContent = `${progress.passed} hari sudah terlewati`;
+  els.dayRemainingText.textContent = `${progress.remaining} hari berikutnya tersisa`;
+  els.dayProgressFill.style.width = `${progress.percent}%`;
 }
 
 function nextLevelInfo(row) {

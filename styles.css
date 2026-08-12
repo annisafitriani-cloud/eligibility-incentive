@@ -734,13 +734,15 @@ input:focus {
 
 .agent-action-panel {
   display: block;
-  max-width: 720px;
+  max-width: none;
   margin-bottom: 18px;
-  padding: 26px 28px;
-  border: 1px solid rgba(91, 185, 222, 0.2);
-  border-radius: 0;
-  background: var(--navy);
-  box-shadow: 0 22px 54px rgba(7, 17, 38, 0.18);
+  padding: 18px;
+  border: 1px solid rgba(91, 185, 222, 0.45);
+  border-radius: 20px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(233, 249, 255, 0.96)),
+    #fff;
+  box-shadow: var(--shadow);
 }
 
 .agent-action-panel.is-hidden {
@@ -748,95 +750,64 @@ input:focus {
 }
 
 .agent-action-head {
-  margin-bottom: 24px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 16px;
 }
 
 .mini-eyebrow {
   display: block;
-  margin-bottom: 20px;
-  color: #b8c9e9;
-  font-size: 20px;
+  margin-bottom: 5px;
+  color: var(--navy-3);
+  font-size: 11px;
   font-weight: 950;
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
 .agent-action-head h2 {
-  color: #fff;
-  font-size: 28px;
-  line-height: 1.1;
+  color: var(--navy);
+  font-size: 20px;
+  line-height: normal;
 }
 
 .agent-action-head p {
-  margin-top: 10px;
-  color: #b8c9e9;
-  font-size: 24px;
-  line-height: 1.2;
-  font-weight: 800;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: normal;
+  font-weight: 750;
 }
 
 .day-progress {
-  --day-progress: 0%;
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  align-items: center;
-  justify-items: start;
-  gap: 34px;
-  margin-bottom: 0;
+  margin-bottom: 14px;
 }
 
-.day-ring {
-  display: grid;
-  place-items: center;
-  width: 146px;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background:
-    radial-gradient(circle, var(--navy) 0 55%, transparent 56%),
-    conic-gradient(var(--yellow) var(--day-progress), #243d6f 0);
-  box-shadow: inset 0 0 0 16px #243d6f;
+.day-progress-label {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+  color: var(--navy);
+  font-size: 13px;
+  font-weight: 900;
 }
 
-.day-ring-core {
-  display: grid;
-  place-items: center;
-  width: 92px;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: var(--navy);
-  color: #fff;
-  line-height: 1;
+.day-progress-track {
+  overflow: hidden;
+  height: 14px;
+  border-radius: 999px;
+  background: #dfeaf4;
 }
 
-.day-ring-core strong {
-  font-size: 40px;
-  font-weight: 950;
-}
-
-.day-ring-core span {
-  margin-top: 4px;
-  color: #b8c9e9;
-  font-size: 16px;
-  font-weight: 850;
-}
-
-.day-progress-copy {
-  min-width: 0;
-}
-
-.day-progress-copy strong {
-  color: #fff;
-  font-size: 30px;
-  font-weight: 950;
-  line-height: 1.15;
-}
-
-.day-progress-copy p {
-  margin-top: 12px;
-  color: #b8c9e9;
-  font-size: 26px;
-  font-weight: 850;
-  line-height: 1.15;
+.day-progress-track i {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--navy-3), var(--sky), var(--yellow));
 }
 
 .activity-notes {
@@ -1314,36 +1285,6 @@ tr:hover td {
 
   .agent-action-head p {
     font-size: 18px;
-  }
-
-  .day-ring {
-    width: 132px;
-  }
-
-  .day-ring-core {
-    width: 84px;
-  }
-
-  .day-ring-core strong {
-    font-size: 36px;
-  }
-
-  .day-ring-core span {
-    font-size: 15px;
-  }
-
-  .day-progress {
-    grid-template-columns: 1fr;
-    justify-items: center;
-    text-align: center;
-  }
-
-  .day-progress-copy strong {
-    font-size: 24px;
-  }
-
-  .day-progress-copy p {
-    font-size: 20px;
   }
 
   .view-tabs {

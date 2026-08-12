@@ -1742,6 +1742,10 @@ function rowsWithActualData(rows) {
   return rows.filter((row) => (row.revenue || 0) > 0 || (row.ach || 0) > 0);
 }
 
+function rowsWithCalculatorData(rows) {
+  return rows.filter((row) => (row.target || 0) > 0 || (row.revenue || 0) > 0 || (row.ach || 0) > 0);
+}
+
 function setupFilters() {
   const rows = dashboardData[activeView] ?? [];
   const scopedRows = optionRows();
@@ -2062,7 +2066,7 @@ const calculatorCategories = {
 };
 
 function calculatorAgentOptions() {
-  const rows = rowsWithActualData(dashboardData.agent ?? []);
+  const rows = rowsWithCalculatorData(dashboardData.agent ?? []);
   const seen = new Map();
   rows.forEach((row) => {
     if (!seen.has(row.email)) {
@@ -2085,7 +2089,7 @@ function syncCalculatorAgentFromSearch() {
 }
 
 function calcRowsForAgent() {
-  const rows = rowsWithActualData(dashboardData.agent ?? []);
+  const rows = rowsWithCalculatorData(dashboardData.agent ?? []);
   if (!els.calcAgent.value) return rows;
   return rows.filter((row) => row.email === els.calcAgent.value);
 }

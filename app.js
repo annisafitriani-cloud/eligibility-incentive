@@ -425,6 +425,7 @@ function statusCounts(rows) {
 function renderSummary(rows) {
   const counts = statusCounts(rows);
   els.records.textContent = `${rows.length.toLocaleString("id-ID")} record filter`;
+  els.statusSummary.style.setProperty("--status-count", counts.length);
   els.statusSummary.innerHTML = counts.map(([label, count]) => {
     const share = rows.length ? count / rows.length : 0;
     return `

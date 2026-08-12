@@ -11,7 +11,7 @@ const calendarMonths = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", 
 const viewConfigs = {
   bm: {
     label: "Tabsheet Eligible BM",
-    title: "Indotim1 BM Incentive",
+    title: "Eligible Incentive BM",
     tableTitle: "Leaderboard Eligible BM",
     searchPlaceholder: "BM, cabang, region",
     typeKey: "type",
@@ -35,7 +35,7 @@ const viewConfigs = {
   },
   agent: {
     label: "Tabsheet Eligible Agent",
-    title: "Indotim1 Agent Incentive",
+    title: "Eligible Incentive Agent",
     tableTitle: "Leaderboard Eligible Agent",
     searchPlaceholder: "Agent, email, cabang",
     typeKey: "position",

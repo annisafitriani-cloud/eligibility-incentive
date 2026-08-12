@@ -628,7 +628,7 @@ input:focus {
 .summary-grid {
   display: grid;
   grid-template-columns: 1fr;
-  max-width: 560px;
+  max-width: none;
   gap: 16px;
   margin-bottom: 18px;
 }
@@ -673,6 +673,7 @@ input:focus {
 
 .status-summary {
   display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
   gap: 18px;
 }
 
@@ -1228,7 +1229,7 @@ tr:hover td {
   }
 
   .agent-action-panel {
-    grid-template-columns: 1fr;
+    display: block;
   }
 
   .activity-notes {

@@ -594,6 +594,15 @@ function bmProgress(row) {
 }
 
 function agentProgress(row) {
+  if (statusKey(row.finalEligibility) === "not eligible") {
+    return progressCell([
+      ["TH 0", "empty"],
+      ["TH 1", "empty"],
+      ["TH 2", "empty"],
+      ["TH 3", "empty"],
+    ], "agent");
+  }
+
   const th0Unlocked = row.gapTH0 <= 0;
   const th1Unlocked = th0Unlocked && row.gapTH1 <= 0;
   const th2Unlocked = th1Unlocked && row.gapTH2 <= 0;

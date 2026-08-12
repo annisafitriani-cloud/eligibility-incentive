@@ -495,11 +495,11 @@ function renderAgentAction(rows) {
     : `Progress Hari - ${weekLabel} ${monthLabel}`;
   els.agentFocusSubtitle.textContent = target
     ? `Hari ini hari ${progress.dayName}. Pantau sisa target dan aktivitas closing minggu ini.`
-    : `Hari ini hari ${progress.dayName}`;
+    : `Hari ini ${progress.dayName}. Gunakan filter nama agent untuk melihat fokus personal.`;
   els.dayProgressRing.style.setProperty("--day-progress", `${progress.percent}%`);
   els.dayRingValue.textContent = `${progress.passed}/6`;
-  els.dayProgressText.textContent = `Sudah lewat ${progress.passed} hari`;
-  els.dayRemainingText.textContent = `${progress.remaining} hari menuju akhir minggu`;
+  els.dayProgressText.textContent = `${progress.dayName}, hari ke-${progress.passed}`;
+  els.dayRemainingText.textContent = `${progress.remaining} hari lagi menuju akhir minggu`;
 }
 
 function nextLevelInfo(row) {

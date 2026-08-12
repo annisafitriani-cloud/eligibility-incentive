@@ -366,7 +366,7 @@ function compareLatestPeriod(a, b) {
 }
 
 function isBmEligible(row) {
-  return statusKey(row.finalEligibility) === "eligible";
+  return [row.finalEligibility, row.revenueOnlineCheck].some((value) => statusKey(value) === "eligible");
 }
 
 function optionRows() {

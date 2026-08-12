@@ -348,7 +348,7 @@ p {
 
 .calculator-form {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px;
   padding: 20px;
   overflow: auto;
@@ -1316,10 +1316,6 @@ tr:hover td {
           <input class="calc-revenue-input calc-money-input" id="calc-online" data-category="online" type="text" inputmode="numeric" placeholder="Rp0" />
         </label>
         <label class="calc-field calc-field-input">
-          Transaksi RB/BAON
-          <input id="calc-online-trx" type="text" inputmode="numeric" placeholder="0" />
-        </label>
-        <label class="calc-field calc-field-input">
           Others (Kids, RGP online, ruanguji, dll)
           <input class="calc-revenue-input calc-money-input" id="calc-others" data-category="others" type="text" inputmode="numeric" placeholder="Rp0" />
         </label>
@@ -1464,7 +1460,6 @@ const els = {
   calcWeek: document.querySelector("#calc-week"),
   calcTarget: document.querySelector("#calc-target"),
   calcTotalRevenue: document.querySelector("#calc-total-revenue"),
-  calcOnlineTrx: document.querySelector("#calc-online-trx"),
   calcAchievement: document.querySelector("#calc-achievement"),
   calcTh: document.querySelector("#calc-th"),
   calcRevenueInputs: document.querySelectorAll(".calc-revenue-input"),
@@ -1502,11 +1497,6 @@ function parseRupiah(value) {
 function formatRupiahInput(input) {
   const value = parseRupiah(input.value);
   input.value = value ? rupiah(value) : "";
-}
-
-function formatNumberInput(input) {
-  const value = parseRupiah(input.value);
-  input.value = value ? numberOnly(value) : "";
 }
 
 function percent(value) {
@@ -1913,12 +1903,6 @@ function thFromAchievement(achievement) {
   return "Tidak Eligible";
 }
 
-function finalThForCalculator(achievement, onlineTrx) {
-  const achievementTh = thFromAchievement(achievement);
-  if (achievementTh !== "Tidak Eligible") return achievementTh;
-  return onlineTrx >= 1 ? "TH 0" : "Tidak Eligible";
-}
-
 function thIndex(th) {
   return Number(String(th).replace("TH ", ""));
 }
@@ -1939,9 +1923,8 @@ function calculateIncentive() {
   const row = selectedCalcRow();
   const target = row?.target || 0;
   const totalRevenue = parseRupiah(els.calcTotalRevenue.value);
-  const onlineTrx = parseRupiah(els.calcOnlineTrx.value);
   const achievement = target > 0 ? totalRevenue / target : 0;
-  const finalTh = finalThForCalculator(achievement, onlineTrx);
+  const finalTh = thFromAchievement(achievement);
   const index = finalTh.startsWith("TH") ? thIndex(finalTh) : -1;
   const breakdown = [...els.calcRevenueInputs].map((input) => {
     const revenue = parseRupiah(input.value);
@@ -1975,7 +1958,6 @@ function resetCalculator() {
   els.calcMonth.value = "";
   els.calcWeek.value = "";
   els.calcTotalRevenue.value = "";
-  els.calcOnlineTrx.value = "";
   els.calcRevenueInputs.forEach((input) => {
     input.value = "";
   });
@@ -2092,12 +2074,6 @@ els.calculatorReset.addEventListener("click", resetCalculator);
     if (cursorAtEnd) control.setSelectionRange(control.value.length, control.value.length);
     calculateIncentive();
   });
-});
-els.calcOnlineTrx.addEventListener("input", () => {
-  const cursorAtEnd = els.calcOnlineTrx.selectionStart === els.calcOnlineTrx.value.length;
-  formatNumberInput(els.calcOnlineTrx);
-  if (cursorAtEnd) els.calcOnlineTrx.setSelectionRange(els.calcOnlineTrx.value.length, els.calcOnlineTrx.value.length);
-  calculateIncentive();
 });
 els.calcAgent.addEventListener("input", () => {
   els.calcMonth.value = "";

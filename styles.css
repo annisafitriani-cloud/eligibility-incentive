@@ -39,9 +39,6 @@ input {
   display: none !important;
 }
 
-.auth-locked .app {
-  display: none;
-}
 
 .auth-screen {
   display: grid;

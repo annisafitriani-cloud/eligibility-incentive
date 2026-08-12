@@ -1,6 +1,4 @@
 let dashboardData = window.DASHBOARD_DATA?.sheets ?? { bm: [], agent: [] };
-const authPasswordHash = "359c1cc4b71a59a2c637fe5f763aa76893b0b3e17e21531f8f8e7739715f62e8";
-const authStorageKey = "indotim1-dashboard-auth";
 const googleSheetId = "1puBeRozOEJnCxUoXLA1oGLCvOHZ6oRFd0yLUfqbDLRw";
 const googleSheetTabs = {
   bm: "Eligible BM",
@@ -117,10 +115,6 @@ const els = {
   calcFinalTh: document.querySelector("#calc-final-th"),
   calcResult: document.querySelector("#calc-result"),
   calcBreakdownBody: document.querySelector("#calc-breakdown-body"),
-  authScreen: document.querySelector("#auth-screen"),
-  authForm: document.querySelector("#auth-form"),
-  authPassword: document.querySelector("#auth-password"),
-  authError: document.querySelector("#auth-error"),
   tableTitle: document.querySelector("#table-title"),
   tableCaption: document.querySelector("#table-caption"),
   tableHead: document.querySelector("#leaderboard-head"),
@@ -146,31 +140,6 @@ function canonicalStatus(value) {
   if (thMatch) return `TH ${thMatch[1]}`;
   if (key === "eligible") return "Eligible";
   return String(value || "Not Eligible");
-}
-
-async function sha256Hex(value) {
-  const bytes = new TextEncoder().encode(value);
-  const digest = await crypto.subtle.digest("SHA-256", bytes);
-  return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
-}
-
-function unlockDashboard() {
-  document.body.classList.remove("auth-locked");
-  els.authScreen.classList.add("is-hidden");
-  sessionStorage.setItem(authStorageKey, "1");
-}
-
-async function handleAuthSubmit(event) {
-  event.preventDefault();
-  const hash = await sha256Hex(els.authPassword.value);
-  if (hash === authPasswordHash) {
-    unlockDashboard();
-    els.authPassword.value = "";
-    els.authError.textContent = "";
-    return;
-  }
-  els.authError.textContent = "Password salah.";
-  els.authPassword.select();
 }
 
 function rupiah(value) {
@@ -948,11 +917,6 @@ els.nextLevelLeft.addEventListener("click", () => {
 els.nextLevelRight.addEventListener("click", () => {
   els.nextLevelTrack.scrollBy({ left: 420, behavior: "smooth" });
 });
-els.authForm.addEventListener("submit", handleAuthSubmit);
-if (sessionStorage.getItem(authStorageKey) === "1") {
-  unlockDashboard();
-}
-
 setupFilters();
 setupCalculatorFilters();
 calculateIncentive();

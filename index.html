@@ -401,6 +401,10 @@ p {
   background: #f8fbff;
 }
 
+.calc-field-select input[type="search"] {
+  padding-right: 42px;
+}
+
 .calculator-result {
   display: grid;
   gap: 6px;
@@ -1285,7 +1289,9 @@ tr:hover td {
         <input id="calc-target" type="hidden" value="0" />
         <label class="calc-field calc-field-select">
           Agent
-          <select id="calc-agent"></select>
+          <input id="calc-agent-search" type="search" list="calc-agent-options" placeholder="Ketik nama agent" autocomplete="off" />
+          <input id="calc-agent" type="hidden" />
+          <datalist id="calc-agent-options"></datalist>
         </label>
         <label class="calc-field calc-field-select">
           Bulan
@@ -1354,7 +1360,13 @@ window.DASHBOARD_DATA = {"generatedFrom":"Google Sheets workbook 1puBeRozOEJnCxU
 
     </script>
     <script>
-const dashboardData = window.DASHBOARD_DATA?.sheets ?? { bm: [], agent: [] };
+let dashboardData = window.DASHBOARD_DATA?.sheets ?? { bm: [], agent: [] };
+const googleSheetId = "1puBeRozOEJnCxUoXLA1oGLCvOHZ6oRFd0yLUfqbDLRw";
+const googleSheetTabs = {
+  bm: "Eligible BM",
+  agent: "Eligible Agent",
+};
+const liveDataRefreshMs = 2 * 60 * 1000;
 const monthOrder = ["July", "Agustus", "September", "Oktober", "November", "Desember"];
 const calendarMonths = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "July", "Agustus", "September", "Oktober", "November", "Desember"];
 
@@ -1455,7 +1467,9 @@ const els = {
   calculatorModal: document.querySelector("#calculator-modal"),
   calculatorModalClose: document.querySelector("#calculator-modal-close"),
   calculatorReset: document.querySelector("#calculator-reset"),
+  calcAgentSearch: document.querySelector("#calc-agent-search"),
   calcAgent: document.querySelector("#calc-agent"),
+  calcAgentOptions: document.querySelector("#calc-agent-options"),
   calcMonth: document.querySelector("#calc-month"),
   calcWeek: document.querySelector("#calc-week"),
   calcTarget: document.querySelector("#calc-target"),
@@ -1518,6 +1532,131 @@ function fillSelect(select, values, label) {
   const current = select.value;
   select.innerHTML = [`<option value="">${label}</option>`, ...values.map((value) => `<option>${value}</option>`)].join("");
   select.value = values.includes(current) ? current : "";
+}
+
+function gvizUrl(sheetName, callbackName) {
+  const params = new URLSearchParams({
+    sheet: sheetName,
+    tqx: `responseHandler:${callbackName}`,
+    cacheBust: Date.now(),
+  });
+  return `https://docs.google.com/spreadsheets/d/${googleSheetId}/gviz/tq?${params.toString()}`;
+}
+
+function valueAt(cells, index) {
+  return cells[index]?.v ?? "";
+}
+
+function fetchGvizRows(sheetName) {
+  return new Promise((resolve, reject) => {
+    const callbackName = `googleSheetCallback_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+    const script = document.createElement("script");
+    const cleanup = () => {
+      delete window[callbackName];
+      script.remove();
+    };
+    window[callbackName] = (payload) => {
+      cleanup();
+      resolve((payload.table?.rows ?? []).map((row) => row.c ?? []));
+    };
+    script.onerror = () => {
+      cleanup();
+      reject(new Error(`Gagal memuat ${sheetName}`));
+    };
+    script.src = gvizUrl(sheetName, callbackName);
+    document.head.appendChild(script);
+  });
+}
+
+function cleanSheetText(value) {
+  if (value === null || value === undefined) return "";
+  return String(value).trim();
+}
+
+function sheetNumber(value) {
+  if (typeof value === "number") return value;
+  const cleaned = cleanSheetText(value).replace(/%$/, "").replace(/\./g, "").replace(",", ".");
+  const parsed = Number(cleaned);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function isRegionCells(cells) {
+  return cleanSheetText(valueAt(cells, 0)).startsWith("Regional");
+}
+
+function buildBmRowsFromCells(rows) {
+  return rows.filter(isRegionCells).map((cells) => ({
+    region: cleanSheetText(valueAt(cells, 0)),
+    branch: cleanSheetText(valueAt(cells, 1)),
+    manager: cleanSheetText(valueAt(cells, 2)),
+    type: cleanSheetText(valueAt(cells, 3)),
+    month: cleanSheetText(valueAt(cells, 4)),
+    target: Math.round(sheetNumber(valueAt(cells, 20))),
+    revenue: Math.round(sheetNumber(valueAt(cells, 21))),
+    ach: sheetNumber(valueAt(cells, 22)),
+    tierRevenueTH0: Math.round(sheetNumber(valueAt(cells, 5))),
+    tierRevenueTH1: Math.round(sheetNumber(valueAt(cells, 6))),
+    tierRevenueTH2: Math.round(sheetNumber(valueAt(cells, 7))),
+    onlineRevenue: Math.round(sheetNumber(valueAt(cells, 24))),
+    onlineTrx: Math.round(sheetNumber(valueAt(cells, 25))),
+    lkpSubmitted: cleanSheetText(valueAt(cells, 26)),
+    revenueOnlineCheck: cleanSheetText(valueAt(cells, 27)),
+    trxOnlineCheck: cleanSheetText(valueAt(cells, 28)),
+    finalEligibility: cleanSheetText(valueAt(cells, 29)),
+    revenueProgress: cleanSheetText(valueAt(cells, 30)),
+    gapTH0: Math.round(sheetNumber(valueAt(cells, 31))),
+    gapTH1: Math.round(sheetNumber(valueAt(cells, 32))),
+    gapTH2: Math.round(sheetNumber(valueAt(cells, 33))),
+  }));
+}
+
+function buildAgentRowsFromCells(rows) {
+  return rows.filter(isRegionCells).map((cells) => ({
+    region: cleanSheetText(valueAt(cells, 0)),
+    branch: cleanSheetText(valueAt(cells, 1)),
+    agent: cleanSheetText(valueAt(cells, 2)),
+    email: cleanSheetText(valueAt(cells, 3)),
+    position: cleanSheetText(valueAt(cells, 4)),
+    month: cleanSheetText(valueAt(cells, 5)),
+    isoweek: cleanSheetText(valueAt(cells, 6)),
+    week: cleanSheetText(valueAt(cells, 7)),
+    target: Math.round(sheetNumber(valueAt(cells, 16))),
+    revenue: Math.round(sheetNumber(valueAt(cells, 17))),
+    ach: sheetNumber(valueAt(cells, 18)),
+    tierRevenueTH0: Math.round(sheetNumber(valueAt(cells, 8))),
+    tierRevenueTH1: Math.round(sheetNumber(valueAt(cells, 9))),
+    tierRevenueTH2: Math.round(sheetNumber(valueAt(cells, 10))),
+    tierRevenueTH3: Math.round(sheetNumber(valueAt(cells, 11))),
+    onlineRevenue: Math.round(sheetNumber(valueAt(cells, 19))),
+    onlineUser: Math.round(sheetNumber(valueAt(cells, 20))),
+    onlineProduct: Math.round(sheetNumber(valueAt(cells, 21))),
+    eligibilityAchievement: cleanSheetText(valueAt(cells, 22)),
+    eligibilityOnline: cleanSheetText(valueAt(cells, 23)),
+    finalEligibility: cleanSheetText(valueAt(cells, 24)),
+    gapTH0: Math.round(sheetNumber(valueAt(cells, 25))),
+    gapTH1: Math.round(sheetNumber(valueAt(cells, 26))),
+    gapTH2: Math.round(sheetNumber(valueAt(cells, 27))),
+    gapTH3: Math.round(sheetNumber(valueAt(cells, 28))),
+  }));
+}
+
+async function refreshLiveData() {
+  try {
+    const [bmRows, agentRows] = await Promise.all([
+      fetchGvizRows(googleSheetTabs.bm),
+      fetchGvizRows(googleSheetTabs.agent),
+    ]);
+    dashboardData = {
+      bm: buildBmRowsFromCells(bmRows),
+      agent: buildAgentRowsFromCells(agentRows),
+    };
+    setupFilters();
+    setupCalculatorFilters();
+    calculateIncentive();
+    renderDashboard();
+  } catch (error) {
+    console.warn("Menggunakan data cache karena live spreadsheet gagal dimuat.", error);
+  }
 }
 
 function monthIndex(month) {
@@ -1880,6 +2019,18 @@ function calculatorAgentOptions() {
   return [...seen.values()].sort((a, b) => a.label.localeCompare(b.label, "id", { numeric: true }));
 }
 
+function selectedCalculatorAgent() {
+  const options = calculatorAgentOptions();
+  return options.find((option) => option.value === els.calcAgent.value)
+    ?? options.find((option) => option.label === els.calcAgentSearch.value)
+    ?? null;
+}
+
+function syncCalculatorAgentFromSearch() {
+  const selected = selectedCalculatorAgent();
+  els.calcAgent.value = selected?.value || "";
+}
+
 function calcRowsForAgent() {
   const rows = rowsWithActualData(dashboardData.agent ?? []);
   if (!els.calcAgent.value) return rows;
@@ -1912,7 +2063,13 @@ function thIndex(th) {
 }
 
 function setupCalculatorFilters() {
-  fillCalcSelect(els.calcAgent, calculatorAgentOptions(), "Pilih agent");
+  const currentAgent = selectedCalculatorAgent();
+  const agentOptions = calculatorAgentOptions();
+  els.calcAgentOptions.innerHTML = agentOptions.map((option) => (
+    `<option value="${option.label}"></option>`
+  )).join("");
+  els.calcAgent.value = currentAgent?.value || "";
+  els.calcAgentSearch.value = currentAgent?.label || els.calcAgentSearch.value;
 
   const rows = calcRowsForAgent();
   const monthOptions = uniqueSorted(rows, "month").map((month) => ({ value: month, label: month }));
@@ -1959,6 +2116,7 @@ function calculateIncentive() {
 
 function resetCalculator() {
   els.calcAgent.value = "";
+  els.calcAgentSearch.value = "";
   els.calcMonth.value = "";
   els.calcWeek.value = "";
   els.calcTotalRevenue.value = "";
@@ -2079,7 +2237,8 @@ els.calculatorReset.addEventListener("click", resetCalculator);
     calculateIncentive();
   });
 });
-els.calcAgent.addEventListener("input", () => {
+els.calcAgentSearch.addEventListener("input", () => {
+  syncCalculatorAgentFromSearch();
   els.calcMonth.value = "";
   els.calcWeek.value = "";
   setupCalculatorFilters();
@@ -2102,6 +2261,8 @@ setupFilters();
 setupCalculatorFilters();
 calculateIncentive();
 renderDashboard();
+refreshLiveData();
+setInterval(refreshLiveData, liveDataRefreshMs);
 
     </script>
   </body>

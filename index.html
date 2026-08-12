@@ -1570,6 +1570,9 @@ function rupiah(value) {
 }
 
 function numberOnly(value) {
+  if (typeof value === "string" && value.trim() && !Number.isFinite(Number(value))) {
+    return value;
+  }
   return new Intl.NumberFormat("id-ID", {
     maximumFractionDigits: 0,
   }).format(value || 0);
@@ -1656,29 +1659,33 @@ function isRegionCells(cells) {
 }
 
 function buildBmRowsFromCells(rows) {
-  return rows.filter(isRegionCells).map((cells) => ({
-    region: cleanSheetText(valueAt(cells, 0)),
-    branch: cleanSheetText(valueAt(cells, 1)),
-    manager: cleanSheetText(valueAt(cells, 2)),
-    type: cleanSheetText(valueAt(cells, 3)),
-    month: cleanSheetText(valueAt(cells, 4)),
-    target: Math.round(sheetNumber(valueAt(cells, 20))),
-    revenue: Math.round(sheetNumber(valueAt(cells, 21))),
-    ach: sheetNumber(valueAt(cells, 22)),
-    tierRevenueTH0: Math.round(sheetNumber(valueAt(cells, 5))),
-    tierRevenueTH1: Math.round(sheetNumber(valueAt(cells, 6))),
-    tierRevenueTH2: Math.round(sheetNumber(valueAt(cells, 7))),
-    onlineRevenue: Math.round(sheetNumber(valueAt(cells, 24))),
-    onlineTrx: Math.round(sheetNumber(valueAt(cells, 25))),
-    lkpSubmitted: cleanSheetText(valueAt(cells, 26)),
-    revenueOnlineCheck: cleanSheetText(valueAt(cells, 27)),
-    trxOnlineCheck: cleanSheetText(valueAt(cells, 28)),
-    finalEligibility: cleanSheetText(valueAt(cells, 29)),
-    revenueProgress: cleanSheetText(valueAt(cells, 30)),
-    gapTH0: Math.round(sheetNumber(valueAt(cells, 31))),
-    gapTH1: Math.round(sheetNumber(valueAt(cells, 32))),
-    gapTH2: Math.round(sheetNumber(valueAt(cells, 33))),
-  }));
+  return rows.filter(isRegionCells).map((cells) => {
+    const finalEligibility = cleanSheetText(valueAt(cells, 30));
+    const gapTH0Text = cleanSheetText(valueAt(cells, 31));
+    return {
+      region: cleanSheetText(valueAt(cells, 0)),
+      branch: cleanSheetText(valueAt(cells, 1)),
+      manager: cleanSheetText(valueAt(cells, 2)),
+      type: cleanSheetText(valueAt(cells, 3)),
+      month: cleanSheetText(valueAt(cells, 4)),
+      target: Math.round(sheetNumber(valueAt(cells, 20))),
+      revenue: Math.round(sheetNumber(valueAt(cells, 21))),
+      ach: sheetNumber(valueAt(cells, 22)),
+      tierRevenueTH0: Math.round(sheetNumber(valueAt(cells, 5))),
+      tierRevenueTH1: Math.round(sheetNumber(valueAt(cells, 6))),
+      tierRevenueTH2: Math.round(sheetNumber(valueAt(cells, 7))),
+      onlineRevenue: Math.round(sheetNumber(valueAt(cells, 24))),
+      onlineTrx: Math.round(sheetNumber(valueAt(cells, 25))),
+      lkpSubmitted: cleanSheetText(valueAt(cells, 26)),
+      revenueOnlineCheck: cleanSheetText(valueAt(cells, 27)),
+      trxOnlineCheck: cleanSheetText(valueAt(cells, 28)),
+      finalEligibility,
+      revenueProgress: gapTH0Text || (finalEligibility.startsWith("TH") ? "Unlocked" : "0"),
+      gapTH0: Math.round(sheetNumber(valueAt(cells, 32))),
+      gapTH1: Math.round(sheetNumber(valueAt(cells, 33))),
+      gapTH2: 0,
+    };
+  });
 }
 
 function buildAgentRowsFromCells(rows) {
@@ -2000,7 +2007,7 @@ function bmProgress(row) {
   const th1Unlocked = th0Unlocked && row.gapTH0 <= 0;
   const th2Unlocked = th1Unlocked && row.gapTH1 <= 0;
   return progressCell([
-    ["TH 0", th0Unlocked ? "Unlocked" : row.revenueProgress],
+    ["TH 0", th0Unlocked ? "Unlocked" : row.gapTH0],
     ["TH 1", th1Unlocked ? "Unlocked" : row.gapTH0],
     ["TH 2", th2Unlocked ? "Unlocked" : row.gapTH1],
   ], "bm");

@@ -355,14 +355,20 @@ p {
 }
 
 .calculator-picker,
-.calculator-entry,
-.calculator-kpi {
+.calculator-entry {
   display: grid;
   gap: 14px;
 }
 
 .calculator-entry {
   grid-template-rows: auto 1fr;
+}
+
+.calculator-topline {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: stretch;
 }
 
 .calculator-product-grid {
@@ -376,7 +382,7 @@ p {
 }
 
 .calculator-kpi {
-  grid-column: 1 / -1;
+  display: grid;
   grid-template-columns: repeat(2, max-content);
   justify-content: center;
   align-items: center;
@@ -413,7 +419,7 @@ p {
 }
 
 .calc-total-field {
-  min-height: 128px;
+  min-height: 112px;
 }
 
 .calc-field-input::after {
@@ -429,12 +435,15 @@ p {
 
 .calc-kpi-pill {
   display: flex;
+  flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 12px;
-  min-height: 54px;
-  padding: 9px 16px;
+  min-width: 118px;
+  min-height: 112px;
+  padding: 12px 16px;
   border: 1px solid rgba(91, 185, 222, 0.55);
-  border-radius: 999px;
+  border-radius: 18px;
   background: var(--sky-soft);
 }
 
@@ -447,7 +456,7 @@ p {
 
 .calc-kpi-pill strong {
   color: var(--navy-3);
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 950;
   white-space: nowrap;
 }
@@ -1133,7 +1142,7 @@ tr:hover td {
     grid-template-columns: 1fr;
   }
 
-  .calculator-kpi,
+  .calculator-topline,
   .calculator-product-grid {
     grid-template-columns: 1fr 1fr;
   }
@@ -1160,6 +1169,7 @@ tr:hover td {
     grid-template-columns: 1fr;
   }
 
+  .calculator-topline,
   .calculator-kpi,
   .calculator-product-grid {
     grid-template-columns: 1fr;
@@ -1359,10 +1369,22 @@ tr:hover td {
           </label>
         </section>
         <section class="calculator-entry">
-          <label class="calc-field calc-field-input calc-total-field">
-            Total Revenue (1 Minggu)
-            <input class="calc-money-input" id="calc-total-revenue" type="text" inputmode="numeric" placeholder="Rp0" />
-          </label>
+          <div class="calculator-topline">
+            <label class="calc-field calc-field-input calc-total-field">
+              Total Revenue (1 Minggu)
+              <input class="calc-money-input" id="calc-total-revenue" type="text" inputmode="numeric" placeholder="Rp0" />
+            </label>
+            <section class="calculator-kpi">
+              <div class="calc-kpi-pill">
+                <span>% Ach</span>
+                <strong id="calc-achievement">0%</strong>
+              </div>
+              <div class="calc-kpi-pill">
+                <span>TH</span>
+                <strong id="calc-th">Tidak Eligible</strong>
+              </div>
+            </section>
+          </div>
           <div class="calculator-product-grid">
             <label class="calc-field calc-field-input">
               Revenue Offline
@@ -1380,16 +1402,6 @@ tr:hover td {
               Ruanguji Kitab
               <input class="calc-revenue-input calc-money-input" id="calc-kitab" data-category="kitab" type="text" inputmode="numeric" placeholder="Rp0" />
             </label>
-          </div>
-        </section>
-        <section class="calculator-kpi">
-          <div class="calc-kpi-pill">
-            <span>Achievement</span>
-            <strong id="calc-achievement">0%</strong>
-          </div>
-          <div class="calc-kpi-pill">
-            <span>Final TH</span>
-            <strong id="calc-th">Tidak Eligible</strong>
           </div>
         </section>
         <div class="calculator-result">

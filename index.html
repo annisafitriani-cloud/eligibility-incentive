@@ -303,6 +303,13 @@ p {
   font-size: 20px;
 }
 
+.calculator-head-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
 .scheme-modal-head button {
   min-height: 38px;
   padding: 0 14px;
@@ -312,6 +319,11 @@ p {
   color: var(--navy);
   cursor: pointer;
   font-weight: 950;
+}
+
+#calculator-reset {
+  background: #e9f9ff;
+  color: var(--navy-3);
 }
 
 .scheme-modal img {
@@ -340,6 +352,53 @@ p {
   gap: 14px;
   padding: 20px;
   overflow: auto;
+}
+
+.calc-field {
+  position: relative;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #fff;
+}
+
+.calc-field::after {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 950;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.calc-field-input {
+  border-color: rgba(245, 204, 56, 0.86);
+  background: #fffdf0;
+}
+
+.calc-field-input::after {
+  content: "Input";
+  background: var(--yellow);
+  color: var(--navy);
+}
+
+.calc-field-auto {
+  border-color: rgba(91, 185, 222, 0.55);
+  background: var(--sky-soft);
+}
+
+.calc-field-auto::after {
+  content: "Auto";
+  background: var(--navy-3);
+  color: #fff;
+}
+
+.calc-field-select {
+  border-color: rgba(16, 44, 93, 0.16);
+  background: #f8fbff;
 }
 
 .calculator-result {
@@ -430,6 +489,23 @@ input {
   outline: none;
   font-size: 14px;
   font-weight: 750;
+}
+
+.calculator-form input,
+.calculator-form select {
+  min-height: 52px;
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.calc-field-input input {
+  border-color: rgba(245, 204, 56, 0.95);
+}
+
+.calc-field-auto input {
+  border-color: rgba(91, 185, 222, 0.7);
+  background: #eefaff;
+  color: var(--navy-3);
 }
 
 select:focus,
@@ -1200,56 +1276,56 @@ tr:hover td {
           <p class="mini-eyebrow">Kalkulator Incentive Agent</p>
           <h2>Hitung Estimasi Incentive</h2>
         </div>
-        <button id="calculator-modal-close" type="button">Close</button>
+        <div class="calculator-head-actions">
+          <button id="calculator-reset" type="button">Reset</button>
+          <button id="calculator-modal-close" type="button">Close</button>
+        </div>
       </div>
       <form class="calculator-form" id="calculator-form">
-        <label>
+        <input id="calc-target" type="hidden" value="0" />
+        <label class="calc-field calc-field-select">
           Agent
           <select id="calc-agent"></select>
         </label>
-        <label>
+        <label class="calc-field calc-field-select">
           Bulan
           <select id="calc-month"></select>
         </label>
-        <label>
+        <label class="calc-field calc-field-select">
           Week
           <select id="calc-week"></select>
         </label>
-        <label>
-          Target Weekly
-          <input id="calc-target" type="text" value="Rp0" readonly />
-        </label>
-        <label>
+        <label class="calc-field calc-field-input">
           Total Revenue (1 Minggu)
-          <input id="calc-total-revenue" type="number" min="0" step="1000" placeholder="Contoh 12000000" />
+          <input class="calc-money-input" id="calc-total-revenue" type="text" inputmode="numeric" placeholder="Rp0" />
         </label>
-        <label>
+        <label class="calc-field calc-field-auto">
           Achievement
           <input id="calc-achievement" type="text" value="0%" readonly />
         </label>
-        <label>
+        <label class="calc-field calc-field-auto">
           Final TH
           <input id="calc-th" type="text" value="Tidak Eligible" readonly />
         </label>
-        <label>
+        <label class="calc-field calc-field-input">
           Revenue Offline (BAC, EAC, RGP Offline)
-          <input class="calc-revenue-input" id="calc-offline" data-category="offline" type="number" min="0" step="1000" placeholder="0" />
+          <input class="calc-revenue-input calc-money-input" id="calc-offline" data-category="offline" type="text" inputmode="numeric" placeholder="Rp0" />
         </label>
-        <label>
+        <label class="calc-field calc-field-input">
           Revenue Online (RB, BAON, EA Online)
-          <input class="calc-revenue-input" id="calc-online" data-category="online" type="number" min="0" step="1000" placeholder="0" />
+          <input class="calc-revenue-input calc-money-input" id="calc-online" data-category="online" type="text" inputmode="numeric" placeholder="Rp0" />
         </label>
-        <label>
+        <label class="calc-field calc-field-input">
           Others (Kids, RGP online, ruanguji, dll)
-          <input class="calc-revenue-input" id="calc-others" data-category="others" type="number" min="0" step="1000" placeholder="0" />
+          <input class="calc-revenue-input calc-money-input" id="calc-others" data-category="others" type="text" inputmode="numeric" placeholder="Rp0" />
         </label>
-        <label>
+        <label class="calc-field calc-field-input">
           Wonderlab
-          <input class="calc-revenue-input" id="calc-wonderlab" data-category="wonderlab" type="number" min="0" step="1000" placeholder="0" />
+          <input class="calc-revenue-input calc-money-input" id="calc-wonderlab" data-category="wonderlab" type="text" inputmode="numeric" placeholder="Rp0" />
         </label>
-        <label>
+        <label class="calc-field calc-field-input">
           Ruanguji Kitab
-          <input class="calc-revenue-input" id="calc-kitab" data-category="kitab" type="number" min="0" step="1000" placeholder="0" />
+          <input class="calc-revenue-input calc-money-input" id="calc-kitab" data-category="kitab" type="text" inputmode="numeric" placeholder="Rp0" />
         </label>
         <div class="calculator-result">
           <span>Final TH Berdasarkan Total Revenue</span>
@@ -1378,6 +1454,7 @@ const els = {
   schemeModalClose: document.querySelector("#scheme-modal-close"),
   calculatorModal: document.querySelector("#calculator-modal"),
   calculatorModalClose: document.querySelector("#calculator-modal-close"),
+  calculatorReset: document.querySelector("#calculator-reset"),
   calcAgent: document.querySelector("#calc-agent"),
   calcMonth: document.querySelector("#calc-month"),
   calcWeek: document.querySelector("#calc-week"),
@@ -1411,6 +1488,15 @@ function numberOnly(value) {
   return new Intl.NumberFormat("id-ID", {
     maximumFractionDigits: 0,
   }).format(value || 0);
+}
+
+function parseRupiah(value) {
+  return Number(String(value || "").replace(/\D/g, ""));
+}
+
+function formatRupiahInput(input) {
+  const value = parseRupiah(input.value);
+  input.value = value ? rupiah(value) : "";
 }
 
 function percent(value) {
@@ -1836,12 +1922,12 @@ function setupCalculatorFilters() {
 function calculateIncentive() {
   const row = selectedCalcRow();
   const target = row?.target || 0;
-  const totalRevenue = Number(els.calcTotalRevenue.value || 0);
+  const totalRevenue = parseRupiah(els.calcTotalRevenue.value);
   const achievement = target > 0 ? totalRevenue / target : 0;
   const finalTh = thFromAchievement(achievement);
   const index = finalTh.startsWith("TH") ? thIndex(finalTh) : -1;
   const breakdown = [...els.calcRevenueInputs].map((input) => {
-    const revenue = Number(input.value || 0);
+    const revenue = parseRupiah(input.value);
     const rate = index >= 0 ? agentNewTransactionRates[input.dataset.category][index] : 0;
     return {
       category: input.dataset.category,
@@ -1852,7 +1938,7 @@ function calculateIncentive() {
   });
   const totalIncentive = breakdown.reduce((sum, item) => sum + item.incentive, 0);
 
-  els.calcTarget.value = target ? rupiah(target) : "Pilih agent, bulan, dan week";
+  els.calcTarget.value = target || 0;
   els.calcAchievement.value = target ? percent(achievement) : "0%";
   els.calcTh.value = finalTh;
   els.calcFinalTh.textContent = finalTh;
@@ -1865,6 +1951,18 @@ function calculateIncentive() {
       <td>${rupiah(item.incentive)}</td>
     </tr>
   `).join("");
+}
+
+function resetCalculator() {
+  els.calcAgent.value = "";
+  els.calcMonth.value = "";
+  els.calcWeek.value = "";
+  els.calcTotalRevenue.value = "";
+  els.calcRevenueInputs.forEach((input) => {
+    input.value = "";
+  });
+  setupCalculatorFilters();
+  calculateIncentive();
 }
 
 function renderTable(rows) {
@@ -1968,8 +2066,14 @@ els.calculatorModalClose.addEventListener("click", () => els.calculatorModal.clo
 els.calculatorModal.addEventListener("click", (event) => {
   if (event.target === els.calculatorModal) els.calculatorModal.close();
 });
+els.calculatorReset.addEventListener("click", resetCalculator);
 [els.calcTotalRevenue, ...els.calcRevenueInputs].forEach((control) => {
-  control.addEventListener("input", calculateIncentive);
+  control.addEventListener("input", () => {
+    const cursorAtEnd = control.selectionStart === control.value.length;
+    formatRupiahInput(control);
+    if (cursorAtEnd) control.setSelectionRange(control.value.length, control.value.length);
+    calculateIncentive();
+  });
 });
 els.calcAgent.addEventListener("input", () => {
   els.calcMonth.value = "";

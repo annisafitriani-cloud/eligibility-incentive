@@ -47,7 +47,7 @@ input {
   display: grid;
   place-items: center;
   min-height: 100vh;
-  padding: 24px;
+  padding: 22px 28px 24px;
 }
 
 .auth-screen.is-hidden {
@@ -173,7 +173,7 @@ p {
   gap: 10px;
   margin-bottom: 5px;
   color: var(--navy);
-  font-size: 18px;
+  font-size: 13px;
 }
 
 .note-icon,
@@ -637,7 +637,7 @@ input:focus {
   min-height: 0;
   padding: 24px;
   border: 1px solid var(--line);
-  border-radius: 26px;
+  border-radius: 24px;
   background:
     linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(244, 249, 252, 0.96)),
     #fff;
@@ -646,7 +646,7 @@ input:focus {
 
 .status-card {
   display: grid;
-  gap: 20px;
+  gap: 18px;
 }
 
 .summary-card-head {
@@ -659,7 +659,7 @@ input:focus {
 .summary-card-head h2 {
   display: block;
   color: var(--muted);
-  font-size: 22px;
+  font-size: 13px;
   font-weight: 950;
   text-transform: uppercase;
 }
@@ -667,23 +667,23 @@ input:focus {
 
 .summary-card p {
   color: var(--muted);
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 900;
 }
 
 .status-summary {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-  gap: 18px;
+  grid-template-columns: repeat(5, minmax(140px, 1fr));
+  gap: 10px;
 }
 
 .status-line {
   display: grid;
   grid-template-columns: 1fr auto auto;
   align-items: center;
-  gap: 18px;
-  min-height: 68px;
-  padding: 13px 16px;
+  gap: 12px;
+  min-height: 58px;
+  padding: 10px 12px 12px;
   border: 1px solid #edf2f7;
   border-radius: 16px;
   background: #fff;
@@ -704,7 +704,7 @@ input:focus {
 }
 
 .status-line em {
-  min-width: 32px;
+  min-width: 22px;
   color: var(--muted);
   text-align: right;
 }
@@ -713,7 +713,7 @@ input:focus {
   grid-column: 1 / -1;
   grid-row: 2;
   overflow: hidden;
-  height: 4px;
+  height: 8px;
   background: #e8eef6;
   border-radius: 999px;
 }
@@ -736,8 +736,8 @@ input:focus {
 .agent-action-panel {
   display: block;
   max-width: none;
-  margin-bottom: 18px;
-  padding: 18px;
+  margin-bottom: 26px;
+  padding: 24px 28px 28px;
   border: 1px solid rgba(91, 185, 222, 0.45);
   border-radius: 20px;
   background:
@@ -755,14 +755,14 @@ input:focus {
   align-items: flex-start;
   justify-content: space-between;
   gap: 18px;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
 
 .mini-eyebrow {
   display: block;
-  margin-bottom: 5px;
+  margin-bottom: 8px;
   color: var(--navy-3);
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 950;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -770,29 +770,29 @@ input:focus {
 
 .agent-action-head h2 {
   color: var(--navy);
-  font-size: 20px;
+  font-size: 22px;
   line-height: normal;
 }
 
 .agent-action-head p {
   margin-top: 4px;
   color: var(--muted);
-  font-size: 13px;
+  font-size: 14px;
   line-height: normal;
   font-weight: 750;
 }
 
 .day-progress {
-  margin-bottom: 14px;
+  margin-bottom: 6px;
 }
 
 .day-progress-label {
   display: flex;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   color: var(--navy);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 900;
 }
 
@@ -1277,15 +1277,15 @@ tr:hover td {
   .status-line span,
   .status-line strong,
   .status-line em {
-    font-size: 14px;
+    font-size: 13px;
   }
 
   .agent-action-head h2 {
-    font-size: 24px;
+    font-size: 22px;
   }
 
   .agent-action-head p {
-    font-size: 18px;
+    font-size: 14px;
   }
 
   .view-tabs {

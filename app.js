@@ -390,6 +390,7 @@ function filteredRows() {
   const rows = dashboardData[activeView] ?? [];
   const config = viewConfigs[activeView];
   const query = normalize(els.search.value);
+  const quickStatusKey = normalize(quickStatus);
 
   return rows
     .filter((row) => (row.revenue || 0) > 0 || (row.ach || 0) > 0)
@@ -401,7 +402,7 @@ function filteredRows() {
     .filter((row) => {
       if (!quickStatus) return true;
       if (activeView === "bm") return quickStatus === "Eligible" ? isBmEligible(row) : !isBmEligible(row);
-      return row.finalEligibility === quickStatus;
+      return normalize(finalTh(row)) === quickStatusKey;
     })
     .filter((row) => {
       if (!query) return true;
@@ -428,7 +429,7 @@ function statusCounts(rows) {
 
   return viewConfigs.agent.quickStatuses.map((status) => [
     status,
-    rows.filter((row) => row.finalEligibility === status).length,
+    rows.filter((row) => normalize(finalTh(row)) === normalize(status)).length,
   ]);
 }
 

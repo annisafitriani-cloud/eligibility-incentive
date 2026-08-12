@@ -634,23 +634,34 @@ input:focus {
 
 .summary-grid {
   display: grid;
-  grid-template-columns: 0.8fr 1.25fr 1fr;
+  grid-template-columns: 1fr;
   gap: 16px;
   margin-bottom: 18px;
 }
 
 .summary-card {
-  min-height: 140px;
-  padding: 18px;
+  min-height: 0;
+  padding: 16px 18px;
   border: 1px solid var(--line);
   border-radius: 18px;
   background: rgba(255, 255, 255, 0.9);
   box-shadow: var(--shadow);
 }
 
+.status-card {
+  display: grid;
+  gap: 12px;
+}
+
+.summary-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
 .summary-card span {
   display: block;
-  margin-bottom: 10px;
   color: var(--muted);
   font-size: 12px;
   font-weight: 950;
@@ -665,27 +676,27 @@ input:focus {
   line-height: 1.05;
 }
 
-#metric-top {
-  font-size: clamp(20px, 2vw, 28px);
-  line-height: 1.18;
-}
-
 .summary-card p {
   color: var(--muted);
   font-size: 13px;
-  font-weight: 750;
+  font-weight: 850;
 }
 
 .status-summary {
   display: grid;
-  gap: 9px;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 10px;
 }
 
 .status-line {
   display: grid;
-  grid-template-columns: minmax(92px, 1fr) minmax(80px, 1fr) 58px 42px;
+  grid-template-columns: 1fr 58px 42px;
   align-items: center;
   gap: 9px;
+  padding: 10px 12px;
+  border: 1px solid #edf2f7;
+  border-radius: 14px;
+  background: #fff;
 }
 
 .status-line span,
@@ -701,6 +712,8 @@ input:focus {
 }
 
 .status-bar {
+  grid-column: 1 / -1;
+  grid-row: 2;
   overflow: hidden;
   height: 10px;
   background: #e8eef6;
@@ -1323,19 +1336,12 @@ tr:hover td {
         </section>
 
         <section class="summary-grid" aria-label="Ringkasan data">
-          <article class="summary-card">
-            <span>Total Record</span>
-            <strong id="metric-record-count">0</strong>
-            <p id="metric-records">0 record filter</p>
-          </article>
-          <article class="summary-card">
-            <span>Status Eligible</span>
+          <article class="summary-card status-card">
+            <div class="summary-card-head">
+              <span>Status Eligible</span>
+              <p id="metric-records">0 record filter</p>
+            </div>
             <div class="status-summary" id="status-summary"></div>
-          </article>
-          <article class="summary-card">
-            <span>Top Performer</span>
-            <strong id="metric-top">-</strong>
-            <p id="metric-top-detail">Belum ada data</p>
           </article>
         </section>
 
@@ -1575,11 +1581,8 @@ const els = {
   status: document.querySelector("#status-filter"),
   search: document.querySelector("#search-filter"),
   reset: document.querySelector("#reset-filters"),
-  recordCount: document.querySelector("#metric-record-count"),
   records: document.querySelector("#metric-records"),
   statusSummary: document.querySelector("#status-summary"),
-  top: document.querySelector("#metric-top"),
-  topDetail: document.querySelector("#metric-top-detail"),
   agentActionPanel: document.querySelector("#agent-action-panel"),
   agentFocusTitle: document.querySelector("#agent-focus-title"),
   agentFocusSubtitle: document.querySelector("#agent-focus-subtitle"),
@@ -1929,10 +1932,7 @@ function statusCounts(rows) {
 }
 
 function renderSummary(rows) {
-  const top = rows[0];
   const counts = statusCounts(rows);
-
-  els.recordCount.textContent = rows.length.toLocaleString("id-ID");
   els.records.textContent = `${rows.length.toLocaleString("id-ID")} record filter`;
   els.statusSummary.innerHTML = counts.map(([label, count]) => {
     const share = rows.length ? count / rows.length : 0;
@@ -1945,10 +1945,6 @@ function renderSummary(rows) {
       </div>
     `;
   }).join("");
-  els.top.textContent = top ? (activeView === "bm" ? top.manager : top.agent) : "-";
-  els.topDetail.textContent = top
-    ? `${activeView === "bm" ? "BM" : top.position || "Agent"} | ${percent(top.ach)}`
-    : "Belum ada data";
 }
 
 function getSelectedAgentRows(rows) {

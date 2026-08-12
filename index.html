@@ -1717,7 +1717,11 @@ function currentMonthWeek() {
 function rowsForOngoingWeek(rows) {
   if (els.week.value) return rows;
   const ongoing = currentMonthWeek();
-  return rows.filter((row) => row.month === ongoing.month && row.week === ongoing.week);
+  const ongoingRows = rows.filter((row) => row.month === ongoing.month && row.week === ongoing.week);
+  if (ongoingRows.length) return ongoingRows;
+  const latest = [...rows].sort(compareLatestPeriod)[0];
+  if (!latest) return [];
+  return rows.filter((row) => row.month === latest.month && row.week === latest.week);
 }
 
 function renderNextLevel(rows) {

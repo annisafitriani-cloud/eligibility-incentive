@@ -594,7 +594,7 @@ function bmProgress(row) {
 }
 
 function agentProgress(row) {
-  if (statusKey(row.finalEligibility) === "not eligible") {
+  if (!row.ach || row.ach <= 0) {
     return progressCell([
       ["TH 0", "empty"],
       ["TH 1", "empty"],

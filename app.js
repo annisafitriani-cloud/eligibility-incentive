@@ -41,7 +41,7 @@ const viewConfigs = {
     tableTitle: "Leaderboard Eligible Agent",
     searchPlaceholder: "Agent, email, cabang",
     typeKey: "position",
-    quickStatuses: ["TH 0", "TH 1", "TH 2", "TH 3", "Tidak Eligible"],
+    quickStatuses: ["TH 0", "TH 1", "TH 2", "TH 3", "Not Eligible"],
     scheme: [
       { th: "TH 0", range: "50% - 74%", incentive: "0.50% / 5.00%", detail: "Min. 1 user online atau achievement revenue sesuai target weekly" },
       { th: "TH 1", range: "75% - 99%", incentive: "1.60% / 7.70%", detail: "Min. 2 user online atau achievement revenue weekly" },
@@ -88,7 +88,6 @@ const els = {
   agentFocusSubtitle: document.querySelector("#agent-focus-subtitle"),
   dayProgressRing: document.querySelector("#day-progress-ring"),
   dayRingValue: document.querySelector("#day-ring-value"),
-  dayProgressTitle: document.querySelector("#day-progress-title"),
   dayProgressText: document.querySelector("#day-progress-text"),
   dayRemainingText: document.querySelector("#day-remaining-text"),
   nextLevelPanel: document.querySelector("#next-level-panel"),
@@ -494,13 +493,12 @@ function renderAgentAction(rows) {
     ? `${target.agent} - ${weekLabel} ${monthLabel}`
     : `Progress Hari - ${weekLabel} ${monthLabel}`;
   els.agentFocusSubtitle.textContent = target
-    ? `Hari ini ${progress.dayName}. Pantau sisa target dan aktivitas closing minggu ini.`
-    : `Hari ini ${progress.dayName}. Gunakan filter nama agent untuk melihat fokus personal.`;
+    ? `Hari ini hari ${progress.dayName}. Pantau sisa target dan aktivitas closing minggu ini.`
+    : `Hari ini hari ${progress.dayName}`;
   els.dayProgressRing.style.setProperty("--day-progress", `${progress.percent}%`);
   els.dayRingValue.textContent = `${progress.passed}/6`;
-  els.dayProgressTitle.textContent = `${progress.dayName}, hari ke-${progress.passed}`;
-  els.dayRemainingText.textContent = `${progress.remaining} hari lagi menuju akhir minggu`;
-  els.dayProgressText.textContent = `${progress.passed} hari sudah terlewati`;
+  els.dayProgressText.textContent = `Sudah lewat ${progress.passed} hari`;
+  els.dayRemainingText.textContent = `${progress.remaining} hari menuju akhir minggu`;
 }
 
 function nextLevelInfo(row) {
@@ -728,7 +726,7 @@ function thFromAchievement(achievement) {
   if (achievement >= 1) return "TH 2";
   if (achievement >= 0.75) return "TH 1";
   if (achievement >= 0.5) return "TH 0";
-  return "Tidak Eligible";
+  return "Not Eligible";
 }
 
 function thIndex(th) {

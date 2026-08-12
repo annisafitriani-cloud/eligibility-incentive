@@ -272,8 +272,11 @@ function isRegionCells(cells) {
 
 function buildBmRowsFromCells(rows) {
   return rows.filter(isRegionCells).map((cells) => {
-    const finalEligibility = cleanSheetText(valueAt(cells, 29));
-    const gapTH0Text = cleanSheetText(valueAt(cells, 30));
+    const eligibilityOnlineProduct = cleanSheetText(valueAt(cells, 29));
+    const finalThText = cleanSheetText(valueAt(cells, 30));
+    const finalThKey = statusKey(finalThText);
+    const finalEligibility = finalThKey.startsWith("th ") ? "Eligible" : finalThText || "Not Eligible";
+    const gapTH0Text = cleanSheetText(valueAt(cells, 31));
     return {
       region: cleanSheetText(valueAt(cells, 0)),
       branch: cleanSheetText(valueAt(cells, 1)),
@@ -289,10 +292,11 @@ function buildBmRowsFromCells(rows) {
       onlineRevenue: Math.round(sheetNumber(valueAt(cells, 24))),
       onlineTrx: Math.round(sheetNumber(valueAt(cells, 25))),
       lkpSubmitted: cleanSheetText(valueAt(cells, 26)),
-      revenueOnlineCheck: cleanSheetText(valueAt(cells, 27)),
+      revenueOnlineCheck: eligibilityOnlineProduct,
       trxOnlineCheck: cleanSheetText(valueAt(cells, 28)),
       finalEligibility,
-      revenueProgress: gapTH0Text || (finalEligibility.startsWith("TH") ? "Unlocked" : "0"),
+      finalTh: finalThKey.startsWith("th ") ? canonicalStatus(finalThText) : "",
+      revenueProgress: gapTH0Text || (finalThKey.startsWith("th ") ? "Unlocked" : "0"),
       gapTH0: Math.round(sheetNumber(valueAt(cells, 31))),
       gapTH1: Math.round(sheetNumber(valueAt(cells, 32))),
       gapTH2: Math.round(sheetNumber(valueAt(cells, 33))),
@@ -366,7 +370,7 @@ function compareLatestPeriod(a, b) {
 }
 
 function isBmEligible(row) {
-  return [row.finalEligibility, row.revenueOnlineCheck].some((value) => statusKey(value) === "eligible");
+  return statusKey(row.finalEligibility) === "eligible";
 }
 
 function optionRows() {
@@ -636,6 +640,7 @@ function agentProgress(row) {
 function finalTh(row) {
   if (activeView === "agent") return row.finalEligibility || "Not Eligible";
   if (!row.revenue || row.revenue <= 0 || !row.ach || row.ach <= 0) return "Not Eligible";
+  if (row.finalTh) return row.finalTh;
   const th0Unlocked = normalize(row.revenueProgress) === "unlocked";
   const th1Unlocked = th0Unlocked && row.gapTH0 <= 0;
   const th2Unlocked = th1Unlocked && row.gapTH1 <= 0;

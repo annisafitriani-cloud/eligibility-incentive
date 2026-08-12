@@ -46,6 +46,55 @@ input {
   display: none !important;
 }
 
+.auth-locked .app {
+  display: none;
+}
+
+.auth-screen {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  padding: 24px;
+}
+
+.auth-screen.is-hidden {
+  display: none !important;
+}
+
+.auth-card {
+  display: grid;
+  gap: 16px;
+  width: min(440px, 100%);
+  padding: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: var(--shadow);
+}
+
+.auth-card h1 {
+  color: var(--navy);
+  font-size: 30px;
+  line-height: 1.1;
+}
+
+.auth-card button {
+  min-height: 48px;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--navy), var(--navy-3));
+  color: #fff;
+  cursor: pointer;
+  font-weight: 950;
+}
+
+.auth-error {
+  min-height: 20px;
+  color: #c51f1f;
+  font-size: 13px;
+  font-weight: 900;
+}
+
 .app {
   min-height: 100vh;
   padding: 26px;
@@ -1193,7 +1242,19 @@ tr:hover td {
 
     </style>
   </head>
-  <body>
+  <body class="auth-locked">
+    <section class="auth-screen" id="auth-screen" aria-label="Login dashboard">
+      <form class="auth-card" id="auth-form">
+        <p class="mini-eyebrow">Indotim1 Incentive Dashboard</p>
+        <h1>Masukkan Password</h1>
+        <label>
+          Password
+          <input id="auth-password" type="password" autocomplete="current-password" placeholder="Password dashboard" />
+        </label>
+        <button type="submit">Masuk</button>
+        <p class="auth-error" id="auth-error" role="alert"></p>
+      </form>
+    </section>
     <main class="app">
       <header class="app-header">
         <div>
@@ -1432,6 +1493,8 @@ window.DASHBOARD_DATA = {"generatedFrom":"Google Sheets workbook 1puBeRozOEJnCxU
     </script>
     <script>
 let dashboardData = window.DASHBOARD_DATA?.sheets ?? { bm: [], agent: [] };
+const authPasswordHash = "359c1cc4b71a59a2c637fe5f763aa76893b0b3e17e21531f8f8e7739715f62e8";
+const authStorageKey = "indotim1-dashboard-auth";
 const googleSheetId = "1puBeRozOEJnCxUoXLA1oGLCvOHZ6oRFd0yLUfqbDLRw";
 const googleSheetTabs = {
   bm: "Eligible BM",
@@ -1551,6 +1614,10 @@ const els = {
   calcFinalTh: document.querySelector("#calc-final-th"),
   calcResult: document.querySelector("#calc-result"),
   calcBreakdownBody: document.querySelector("#calc-breakdown-body"),
+  authScreen: document.querySelector("#auth-screen"),
+  authForm: document.querySelector("#auth-form"),
+  authPassword: document.querySelector("#auth-password"),
+  authError: document.querySelector("#auth-error"),
   tableTitle: document.querySelector("#table-title"),
   tableCaption: document.querySelector("#table-caption"),
   tableHead: document.querySelector("#leaderboard-head"),
@@ -1559,6 +1626,31 @@ const els = {
 
 function normalize(value) {
   return String(value ?? "").trim().toLowerCase();
+}
+
+async function sha256Hex(value) {
+  const bytes = new TextEncoder().encode(value);
+  const digest = await crypto.subtle.digest("SHA-256", bytes);
+  return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
+function unlockDashboard() {
+  document.body.classList.remove("auth-locked");
+  els.authScreen.classList.add("is-hidden");
+  sessionStorage.setItem(authStorageKey, "1");
+}
+
+async function handleAuthSubmit(event) {
+  event.preventDefault();
+  const hash = await sha256Hex(els.authPassword.value);
+  if (hash === authPasswordHash) {
+    unlockDashboard();
+    els.authPassword.value = "";
+    els.authError.textContent = "";
+    return;
+  }
+  els.authError.textContent = "Password salah.";
+  els.authPassword.select();
 }
 
 function rupiah(value) {
@@ -1921,7 +2013,7 @@ function nextLevelInfo(row) {
   if (!next) return null;
   const achieved = Math.max(0, Math.min(1, 1 - (next.gap || 0) / next.target));
   return {
-    label: next.gap > 0 ? `Buka ${next.label}` : "Unlocked",
+    label: next.gap > 0 ? `Unlocked ${next.label}` : "Unlocked",
     gap: Math.max(next.gap || 0, 0),
     progress: achieved,
   };
@@ -2336,6 +2428,10 @@ els.nextLevelLeft.addEventListener("click", () => {
 els.nextLevelRight.addEventListener("click", () => {
   els.nextLevelTrack.scrollBy({ left: 420, behavior: "smooth" });
 });
+els.authForm.addEventListener("submit", handleAuthSubmit);
+if (sessionStorage.getItem(authStorageKey) === "1") {
+  unlockDashboard();
+}
 
 setupFilters();
 setupCalculatorFilters();

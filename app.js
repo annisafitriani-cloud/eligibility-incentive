@@ -401,6 +401,10 @@ function filteredRows() {
       return haystack.some((item) => normalize(item).includes(query));
     })
     .sort((a, b) => {
+      if (activeView === "agent" && !quickStatus) {
+        const gapCompare = remainingGap(a) - remainingGap(b);
+        if (gapCompare !== 0) return gapCompare;
+      }
       const periodCompare = compareLatestPeriod(a, b);
       if (periodCompare !== 0) return periodCompare;
       return (b.ach || 0) - (a.ach || 0);
@@ -836,7 +840,9 @@ function renderDashboard() {
   els.sheetLabel.textContent = config.label;
   els.title.textContent = config.title;
   els.tableTitle.textContent = config.tableTitle;
-  els.tableCaption.textContent = `${rows.length.toLocaleString("id-ID")} record, sorted by Ach Revenue`;
+  els.tableCaption.textContent = activeView === "agent" && !quickStatus
+    ? `${rows.length.toLocaleString("id-ID")} record, sorted by Gap Target terkecil`
+    : `${rows.length.toLocaleString("id-ID")} record, sorted by Ach Revenue`;
   renderScheme();
   renderQuickToggles();
   renderSummary(rows);

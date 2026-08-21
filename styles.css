@@ -1019,19 +1019,17 @@ input:focus {
 
 .panel-head {
   display: grid;
-  align-items: flex-end;
-  justify-content: center;
-  justify-items: center;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
   gap: 18px;
   padding: 18px 20px;
   background: linear-gradient(90deg, var(--navy), var(--navy-2) 72%, rgba(245, 204, 56, 0.9));
-  text-align: center;
+  text-align: left;
 }
 
 .panel-head h2 {
   color: #fff;
   font-size: 22px;
-  text-align: center;
 }
 
 .panel-head p {
@@ -1039,6 +1037,32 @@ input:focus {
   color: #dce9f7;
   font-size: 13px;
   font-weight: 800;
+}
+
+.download-pdf {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 0 14px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.download-pdf span {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.download-pdf:hover {
+  background: var(--yellow);
+  border-color: var(--yellow);
+  color: var(--navy);
 }
 
 .table-wrap {
@@ -1292,5 +1316,114 @@ tr:hover td {
 
   .view-tab {
     flex: 1;
+  }
+}
+
+@media print {
+  @page {
+    size: landscape;
+    margin: 10mm;
+  }
+
+  body {
+    background: #fff;
+  }
+
+  .app {
+    padding: 0;
+  }
+
+  .app-header,
+  .notes,
+  .sheet-label,
+  .scheme-panel,
+  .filters,
+  .summary-grid,
+  .agent-action-panel,
+  .next-level-panel,
+  .toggle-row,
+  .download-pdf {
+    display: none !important;
+  }
+
+  .table-panel {
+    overflow: visible;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .panel-head {
+    display: block;
+    padding: 0 0 12px;
+    background: #fff;
+    color: #111827;
+    text-align: left;
+  }
+
+  .panel-head h2 {
+    color: #111827;
+    font-size: 20px;
+  }
+
+  .panel-head p {
+    color: #637083;
+    font-size: 11px;
+  }
+
+  .table-wrap {
+    overflow: visible;
+    padding: 0;
+  }
+
+  table {
+    min-width: 0;
+    width: 100%;
+  }
+
+  th,
+  td {
+    padding: 7px 6px;
+    font-size: 9px;
+  }
+
+  th {
+    font-size: 8px;
+  }
+
+  .gap-grid {
+    min-width: 0;
+  }
+
+  .gap-grid.agent {
+    min-width: 0;
+  }
+
+  .gap-grid.bm {
+    min-width: 0;
+  }
+
+  .gap-cell {
+    min-height: 34px;
+    padding: 5px 4px;
+  }
+
+  .gap-cell small {
+    font-size: 7px;
+  }
+
+  .gap-cell strong {
+    font-size: 8px;
+  }
+
+  .status-badge {
+    min-height: 22px;
+    padding: 0 6px;
+    font-size: 8px;
+  }
+
+  tbody tr {
+    break-inside: avoid;
+    filter: none;
   }
 }

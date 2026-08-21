@@ -92,6 +92,7 @@ const els = {
   nextLevelLeft: document.querySelector("#next-level-left"),
   nextLevelRight: document.querySelector("#next-level-right"),
   quickToggleRow: document.querySelector("#quick-toggle-row"),
+  downloadPdf: document.querySelector("#download-pdf"),
   schemeTitle: document.querySelector("#scheme-title"),
   schemeSubtitle: document.querySelector("#scheme-subtitle"),
   schemeGrid: document.querySelector("#scheme-grid"),
@@ -816,6 +817,17 @@ function renderTable(rows) {
     : `<tr><td colspan="${config.columns.length}" class="empty">Tidak ada data untuk filter ini.</td></tr>`;
 }
 
+function downloadCurrentPagePdf() {
+  const viewLabel = activeView === "bm" ? "BM" : "Agent";
+  const filterLabel = quickStatus ? ` - ${quickStatus}` : "";
+  const previousTitle = document.title;
+  document.title = `Eligible Incentive ${viewLabel}${filterLabel}`;
+  window.print();
+  window.setTimeout(() => {
+    document.title = previousTitle;
+  }, 1000);
+}
+
 function renderQuickToggles() {
   const config = viewConfigs[activeView];
   els.quickToggleRow.innerHTML = [
@@ -935,6 +947,7 @@ els.nextLevelLeft.addEventListener("click", () => {
 els.nextLevelRight.addEventListener("click", () => {
   els.nextLevelTrack.scrollBy({ left: 420, behavior: "smooth" });
 });
+els.downloadPdf.addEventListener("click", downloadCurrentPagePdf);
 setupFilters();
 setupCalculatorFilters();
 calculateIncentive();
